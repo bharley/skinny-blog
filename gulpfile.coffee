@@ -6,7 +6,7 @@ sass         = require 'gulp-sass'
 uglify       = require 'gulp-uglify'
 concat       = require 'gulp-concat'
 rename       = require 'gulp-rename'
-rimraf       = require 'gulp-rimraf'
+del          = require 'del'
 sourcemaps   = require 'gulp-sourcemaps'
 autoprefixer = require 'gulp-autoprefixer'
 plumber      = require 'gulp-plumber'
@@ -52,9 +52,7 @@ gulp.task 'coffee', ->
       .pipe gulp.dest(paths.coffee.output)
 
 # Removes dev-only files like *.map files
-gulp.task 'remove-dev', ->
-  gulp.src paths.clean
-      .pipe rimraf()
+gulp.task 'remove-dev', (cb) -> del [paths.clean], cb
 
 # Task for watching changes
 gulp.task 'watch', ->
