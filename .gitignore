@@ -1,0 +1,8 @@
+/.idea
+/node_modules
+/vendor
+/config/*
+npm-debug.log
+.DS_Store
+
+!/config/config.yaml.dist

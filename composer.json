@@ -1,0 +1,31 @@
+{
+    "name": "bharley/skinny-blog",
+    "description": "REST API-based blogging platform.",
+    "authors": [
+        {
+            "name": "Blake Harley",
+            "email": "blake@blakeharley.com",
+            "homepage": "http://www.blakeharley.com"
+        }
+    ],
+
+    "require": {
+        "php": ">=5.4",
+        "ext-apcu": "*",
+        "ext-yaml": "*",
+
+        "slim/slim": "2.*",
+        "league/container": "~1.2",
+        "doctrine/orm": "2.4.*"
+    },
+
+    "require-dev": {
+        "phpunit/phpunit": "4.5.*"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "SkinnyBlog\\": "src/SkinnyBlog"
+        }
+    }
+}

@@ -1,0 +1,8 @@
+# Uncomment this for production behavior
+#env: production
+
+# Set up your database connection here
+db:
+  username: root
+  password: ~
+  database: blog
