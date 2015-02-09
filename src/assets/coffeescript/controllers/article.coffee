@@ -1,13 +1,15 @@
 
 angular.module('skinnyBlog').controller 'ArticleController', [
-  '$stateParams', 'ApiService',
-  ($stateParams,   api) -> new class ArticleController
+  '$stateParams', 'ApiService', 'ActivityService',
+  ($stateParams,   api,          activity) -> new class ArticleController
     constructor: ->
-      api.getArticle(
+      promise =  api.getArticle(
         $stateParams.year,
         $stateParams.month,
         $stateParams.title
-      ).success (data) =>
+      )
+      activity.addPromise promise
+      promise.success (data) =>
         @putArticleInScope data.article
       .error (data) ->
         # todo: Go to a 404 page

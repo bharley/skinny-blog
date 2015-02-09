@@ -1,11 +1,10 @@
 
 angular.module('skinnyBlog').controller 'ArticlesController', [
-  '$stateParams', 'ApiService',
-  ($stateParams,   api) -> new class ArticlesController
+  '$stateParams', 'ApiService', 'ActivityService',
+  ($stateParams,   api,          activity) -> new class ArticlesController
     constructor: ->
       @all = null
 
-      console.log $stateParams
       promise = if $stateParams.tag
         @rawTag = $stateParams.tag
         @tag = $stateParams.tag.replace /-/g, ' '
@@ -13,6 +12,7 @@ angular.module('skinnyBlog').controller 'ArticlesController', [
       else
         api.getArticles()
 
+      activity.addPromise promise
       promise.success (data) =>
         @all = data.articles
       .error (data) =>

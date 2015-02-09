@@ -9,21 +9,26 @@ app = angular.module('skinnyBlog', ['ui.router']).config [
     $stateProvider
       # List of articles
       .state 'articles',
-        url:          '^/'
-        templateUrl:  'partials/articles.html'
-        controller:   'ArticlesController as articles'
+        url:         '^/'
+        templateUrl: 'partials/articles.html'
+        controller:  'ArticlesController as articles'
 
       # Lists articles with the given tag
       .state 'tag',
-        url:          '^/tag/:tag'
-        templateUrl:  'partials/articles.html'
-        controller:   'ArticlesController as articles'
+        url:         '^/tag/:tag'
+        templateUrl: 'partials/articles.html'
+        controller:  'ArticlesController as articles'
 
       # Single article view
       .state 'article',
-        url:          '^/{year:[0-9]{4}}/{month:[0-9]{2}}/:title'
-        templateUrl:  'partials/article.html'
-        controller:   'ArticleController as article'
+        url:         '^/{year:[0-9]{4}}/{month:[0-9]{2}}/:title'
+        templateUrl: 'partials/article.html'
+        controller:  'ArticleController as article'
+
+      .state 'admin',
+        url:         '^/admin'
+        templateUrl: 'partials/admin/dashboard.html'
+        controller:  'AdminDashboardController as dashboard'
 
     # Adds the 'success' and 'error' convenience methods that the $http promises have
     $provide.decorator '$q', [
@@ -46,6 +51,13 @@ app = angular.module('skinnyBlog', ['ui.router']).config [
 
         return $delegate
     ]
+]
+
+app.run [
+  'ActivityService',
+  (activity) ->
+    # Since the app is running, count down that initial stack count
+    activity.decrementCounter()
 ]
 
 # Directive for markdown processing
