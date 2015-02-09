@@ -19,7 +19,7 @@ to run the blog:
 $ ./vendor/bin/doctrine orm:schema-tool:create
 ```
 
-PHPUnit has been set up to run tests located in the `tests` folder, so you can
+[PHPUnit] has been set up to run tests located in the `tests` folder, so you can
 simply run the PHPUnit script to run the test suite:
 
 ```
