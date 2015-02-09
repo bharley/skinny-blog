@@ -47,3 +47,10 @@ app = angular.module('skinnyBlog', ['ui.router']).config [
         return $delegate
     ]
 ]
+
+app.directive 'bhMarkdown', ->
+  restrict: 'A'
+  scope:
+    markdown: "&bhMarkdown"
+  link: (scope, element, attrs) ->
+    element.html marked(scope.markdown())
