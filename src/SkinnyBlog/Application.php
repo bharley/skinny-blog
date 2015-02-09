@@ -39,7 +39,7 @@ class Application extends Slim
         if ($article) {
             return $article;
         } else {
-            $this->apiResponse([], 400, "Article id:$id not found");
+            $this->apiResponse([], 404, "Article id:$id not found");
             return null;
         }
     }
@@ -57,7 +57,7 @@ class Application extends Slim
         if ($tag) {
             return $tag;
         } else {
-            $this->apiResponse([], 400, "Tag id:$id not found");
+            $this->apiResponse([], 404, "Tag id:$id not found");
             return null;
         }
     }

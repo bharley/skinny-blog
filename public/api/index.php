@@ -57,20 +57,26 @@ $app->get('/articles', function () use ($app, $em) {
 $app->post('/articles', function() use ($app, $em) {
     $data = $app->request->getBody();
 
-    // Find tags and deal with them
-    if (array_key_exists('tags', $data)) {
-        $data['tags'] = array_map(function($id) use ($em) {
-            return $em->getReference('Blog:Tag', $id);
-        }, $data['tags']);
+    if (is_array($data) && array_key_exists('article', $data)) {
+        $data = $data['article'];
+
+        // Find tags and deal with them
+        if (array_key_exists('tags', $data)) {
+            $data['tags'] = array_map(function ($id) use ($em) {
+                return $em->getReference('Blog:Tag', $id);
+            }, $data['tags']);
+        }
+
+        $article = new SkinnyBlog\Entity\Article($data);
+        $em->persist($article);
+        $em->flush();
+
+        $app->apiResponse([
+            'article' => $article,
+        ]);
+    } else {
+        $app->apiResponse([], 400, 'Missing hash "article" in request.');
     }
-
-    $article = new SkinnyBlog\Entity\Article($data);
-    $em->persist($article);
-    $em->flush();
-
-    $app->apiResponse([
-        'article' => $article,
-    ]);
 });
 
 // Get a single article
@@ -96,7 +102,7 @@ $app->get('/articles/:year/:month/:title', function ($year, $month, $title) use 
             'article' => $article,
         ]);
     } else {
-        $app->apiResponse([], 400, "Article year:$year, month:$month, title:\"$title\" not found");
+        $app->apiResponse([], 404, "Article year:$year, month:$month, title:\"$title\" not found");
     }
 });
 
@@ -135,19 +141,25 @@ $app->put('/articles/:id', function ($id) use ($app, $em) {
     if ($article) {
         $data = $app->request->getBody();
 
-        // Find tags and deal with them
-        if (array_key_exists('tags', $data)) {
-            $data['tags'] = array_map(function($id) use ($em) {
-                return $em->getReference('Blog:Tag', $id);
-            }, $data['tags']);
+        if (is_array($data) && array_key_exists('article', $data)) {
+            $data = $data['article'];
+
+            // Find tags and deal with them
+            if (array_key_exists('tags', $data)) {
+                $data['tags'] = array_map(function ($id) use ($em) {
+                    return $em->getReference('Blog:Tag', $id);
+                }, $data['tags']);
+            }
+
+            $article->unserialize($data);
+            $em->flush();
+
+            $app->apiResponse([
+                'article' => $article,
+            ]);
+        } else {
+            $app->apiResponse([], 400, 'Missing hash "article" in request.');
         }
-
-        $article->unserialize($data);
-        $em->flush();
-
-        $app->apiResponse([
-            'article' => $article,
-        ]);
     }
 });
 
@@ -174,13 +186,19 @@ $app->get('/tags', function () use ($app, $em) {
 $app->post('/tags', function() use ($app, $em) {
     $data = $app->request->getBody();
 
-    $tag = new SkinnyBlog\Entity\Tag($data);
-    $em->persist($tag);
-    $em->flush();
+    if (is_array($data) && array_key_exists('tag', $data)) {
+        $data = $data['tag'];
 
-    $app->apiResponse([
-        'tag' => $tag,
-    ]);
+        $tag = new SkinnyBlog\Entity\Tag($data);
+        $em->persist($tag);
+        $em->flush();
+
+        $app->apiResponse([
+            'tag' => $tag,
+        ]);
+    } else {
+        $app->apiResponse([], 400, 'Missing hash "tag" in request.');
+    }
 });
 
 // Delete a tag
