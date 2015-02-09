@@ -41,6 +41,13 @@ having to install Node and all of its dependencies on the production server. The
 map files are ignore by the `.gitignore` file, but you can also run the `build` or
 `default` Gulp tasks to remove the map files.
 
+To make working on the frontend easier, a `watch` task has been set up to automatically
+transpile when something has changed:
+
+```
+$ gulp watch
+```
+
 ## Notes
 
 This platform is still in heavy development and really isn't designed to be installed
