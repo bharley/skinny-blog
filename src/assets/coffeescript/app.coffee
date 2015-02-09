@@ -48,6 +48,7 @@ app = angular.module('skinnyBlog', ['ui.router']).config [
     ]
 ]
 
+# Directive for markdown processing
 app.directive 'bhMarkdown', ->
   restrict: 'A'
   scope:
