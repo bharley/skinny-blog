@@ -55,7 +55,7 @@ gulp.task 'coffee', ->
 gulp.task 'remove-dev', (cb) -> del [paths.clean], cb
 
 # Task for watching changes
-gulp.task 'watch', ->
+gulp.task 'watch', ['build-dev'], ->
   gulp.watch paths.sass.input,   ['sass']
   gulp.watch paths.coffee.input, ['coffee']
 
