@@ -14,6 +14,6 @@ angular.module('skinnyBlog').controller 'ArticleController', [
         console.log data
 
     putArticleInScope: (article) ->
-      @title = article.title
-      @text = article.text
+      properties = ['title', 'text', 'publishedDate', 'slugParts', 'tags']
+      @[property] = article[property] for property in properties
 ]

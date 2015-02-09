@@ -4,6 +4,7 @@ namespace SkinnyBlog;
 
 use Doctrine\ORM\EntityManager;
 use SkinnyBlog\Entity\Article;
+use SkinnyBlog\Entity\Tag;
 use Slim\Slim;
 
 class Application extends Slim
@@ -39,6 +40,24 @@ class Application extends Slim
             return $article;
         } else {
             $this->apiResponse([], 400, "Article id:$id not found");
+            return null;
+        }
+    }
+
+    /**
+     * @param EntityManager $em
+     * @param int           $id
+     *
+     * @return Tag|null The matching tag if it exists
+     */
+    public function getTag(EntityManager $em, $id) {
+        /** @var Article $article */
+        $tag = $em->find('Blog:Tag', $id);
+
+        if ($tag) {
+            return $tag;
+        } else {
+            $this->apiResponse([], 400, "Tag id:$id not found");
             return null;
         }
     }

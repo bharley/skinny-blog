@@ -9,13 +9,19 @@ app = angular.module('skinnyBlog', ['ui.router']).config [
     $stateProvider
       # List of articles
       .state 'articles',
-        url:          '/'
+        url:          '^/'
+        templateUrl:  'partials/articles.html'
+        controller:   'ArticlesController as articles'
+
+      # Lists articles with the given tag
+      .state 'tag',
+        url:          '^/tag/:tag'
         templateUrl:  'partials/articles.html'
         controller:   'ArticlesController as articles'
 
       # Single article view
       .state 'article',
-        url:          '/{year:[0-9]{4}}/{month:[0-9]{2}}/:title'
+        url:          '^/{year:[0-9]{4}}/{month:[0-9]{2}}/:title'
         templateUrl:  'partials/article.html'
         controller:   'ArticleController as article'
 

@@ -3,6 +3,8 @@
 namespace SkinnyBlog\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
 use JsonSerializable;
@@ -57,11 +59,18 @@ class Article implements JsonSerializable
     protected $publishedDate;
 
     /**
+     * @var Collection
+     * @ORM\ManyToMany(targetEntity="Tag", inversedBy="articles")
+     */
+    protected $tags;
+
+    /**
      * @param array $data Data to unserialize this instance with (Optional)
      */
     public function __construct($data = null) {
         $this->published = false;
         $this->publishedDate = new DateTime;
+        $this->tags = new ArrayCollection;
 
         if ($data) {
             $this->unserialize($data);
@@ -89,6 +98,39 @@ class Article implements JsonSerializable
     }
 
     /**
+     * @return array The parts of the slug
+     */
+    public function getSlugParts() {
+        list($year, $month, $title) = explode('/', $this->slug);
+
+        return compact('year', 'month', 'title');
+    }
+
+    public function setPublishedDate($date) {
+        if (!$date instanceof DateTime) {
+            $date = new DateTime($date);
+        }
+
+        $this->publishedDate = $date;
+    }
+
+    /**
+     * @param array $tags
+     */
+    public function setTags($tags) {
+        $this->tags = new ArrayCollection($tags);
+    }
+
+    /**
+     * @return array
+     */
+    public function getTags() {
+        return $this->tags->map(function (Tag $tag) {
+            return $tag->jsonSerialize();
+        })->toArray();
+    }
+
+    /**
      * @return array The properties that are not allowed to be injected by unserialization
      */
     public function getProtectedProperties() {
@@ -107,10 +149,12 @@ class Article implements JsonSerializable
         return [
             'id'            => $this->id,
             'slug'          => $this->slug,
+            'slugParts'     => $this->getSlugParts(),
             'title'         => $this->title,
             'text'          => $this->text,
             'published'     => $this->published,
             'publishedDate' => $this->publishedDate ? $this->publishedDate->format('c') : null,
+            'tags'          => $this->getTags(),
         ];
     }
 }

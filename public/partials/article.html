@@ -1,2 +1,36 @@
-<h1>{{ article.title }}</h1>
-<p>{{ article.text }}</p>
+
+<article>
+    <header>
+        <h1>
+            <a ui-sref="article({year: article.slugParts.year, month: article.slugParts.month, title: article.slugParts.title})">
+                {{ article.title }}
+            </a>
+        </h1>
+        <div class="published-date visible-xs">
+            <i class="fa fa-pencil"></i>
+            {{ article.publishedDate | date:'MMMM d, yyyy' }}
+        </div>
+        <ul class="tags" ng-show="article.tags && article.tags.length > 0">
+            <li ng-repeat="tag in article.tags">
+                <a ui-sref="tag({tag: tag.url})">
+                    <i class="fa fa-tag"></i> {{ tag.name }}
+                </a>
+            </li>
+        </ul>
+
+        <div class="date-ribbon hidden-xs">
+            <div class="ribbon-container">
+                <div class="base">
+                    <div class="date">{{ article.publishedDate | date:'d MMM' }}</div>
+                    <div class="year">{{ article.publishedDate | date:'yyyy' }}</div>
+                </div>
+                <div class="left_corner"></div>
+                <div class="right_corner"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="body">
+        {{ article.text }}
+    </div>
+</article>

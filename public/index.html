@@ -7,6 +7,8 @@
     <title>Blake Harley</title>
     <base href="/">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/assets/css/style.min.css">
 
     <!--[if lt IE 9]>
         <script src="//oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -21,7 +23,17 @@
 </head>
 <body>
 
-    <div ui-view></div>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">Blake Harley</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div ui-view></div>
+    </div>
 
 </body>
 </html>

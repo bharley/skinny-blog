@@ -1,8 +1,16 @@
 
-<h1>Articles</h1>
+<div class="tag-notice" ng-show="articles.tag">
+    <i class="fa fa-search"></i>
+    <ul class="tags">
+        <li>
+            <a ui-sref="tag({tag: articles.rawTag})">
+                <i class="fa fa-tag"></i>
+                {{ articles.tag }}
+            </a>
+        </li>
+    </ul>
+</div>
 
-<ul>
-    <li ng-repeat="article in articles.all">
-        {{ article.title }}
-    </li>
-</ul>
+<div class="article-list">
+    <div ng-repeat="article in articles.all" ng-include="'partials/article.html'"></div>
+</div>

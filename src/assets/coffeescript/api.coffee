@@ -11,9 +11,20 @@ angular.module('skinnyBlog').factory 'ApiService', [
         deferred = $q.defer()
 
         $http.get('/api/articles').success (data) =>
-          for article in data.articles
-            @cache.put "article:#{article.slug}",
-              article: article
+          @cacheArticles data.articles
+          deferred.resolve data
+        .error (data) ->
+          deferred.reject data
+
+        return deferred.promise
+
+    # Fetches all of the articles with the given tag
+    getArticlesWithTag: (tag) ->
+      @cacheOrPerform "articles tag:#{tag}", =>
+        deferred = $q.defer()
+
+        $http.get('/api/articles?tag=' + tag).success (data) =>
+          @cacheArticles data.articles
           deferred.resolve data
         .error (data) ->
           deferred.reject data
@@ -29,6 +40,13 @@ angular.module('skinnyBlog').factory 'ApiService', [
 
       @cacheOrPerform "article:#{slug}", ->
         $http.get "/api/articles/#{slug}"
+
+    cacheArticles: (articles) ->
+      for article in articles
+        # Create a promise so that this meets the same API contract as getting a single article
+        articleDeferred = $q.defer()
+        articleDeferred.resolve(article: article)
+        @cache.put "article:#{article.slug}", articleDeferred.promise
 
     # Helper method for grabbing something from the cache if it's there
     cacheOrPerform: (key, fn) ->
