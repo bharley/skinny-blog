@@ -19,6 +19,13 @@ to run the blog:
 $ ./vendor/bin/doctrine orm:schema-tool:create
 ```
 
+PHPUnit has been set up to run tests located in the `tests` folder, so you can
+simply run the PHPUnit script to run the test suite:
+
+```
+$ ./vendor/bin/phpunit
+```
+
 We can have PHP serve the site for us (it will set up all of the proper re-write rules):
 
 ```
@@ -57,4 +64,5 @@ for my personal blog, but there's no reason to close-source the codebase.
 [AngularJS]: https://angularjs.org/
 [Slim Framework]: http://www.slimframework.com/
 [Doctrine]: http://www.doctrine-project.org/
+[PHPUnit]: https://phpunit.de/
 [Gulp]: http://gulpjs.com/
