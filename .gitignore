@@ -4,5 +4,6 @@
 /config/*
 npm-debug.log
 .DS_Store
+/public/assets/*/*.map
 
 !/config/config.yaml.dist

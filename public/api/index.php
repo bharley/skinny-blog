@@ -65,6 +65,22 @@ $app->get('/articles/:id', function ($id) use ($app, $em) {
     }
 });
 
+// Get a single article by it's slug
+$app->get('/articles/:year/:month/:title', function ($year, $month, $title) use ($app, $em) {
+    $dql = 'SELECT a FROM Blog:Article a WHERE a.slug = :slug';
+    $article = $em->createQuery($dql)
+                  ->setParameter('slug', "$year/$month/$title")
+                  ->getOneOrNullResult();
+
+    if ($article) {
+        $app->apiResponse([
+            'article' => $article,
+        ]);
+    } else {
+        $app->apiResponse([], 400, "Article year:$year, month:$month, title:\"$title\" not found");
+    }
+});
+
 // Publish an article
 $app->put('/articles/:id/publish', function ($id) use ($app, $em) {
     $article = $app->getArticle($em, $id);
