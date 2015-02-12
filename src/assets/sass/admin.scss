@@ -1,0 +1,41 @@
+.dashboard {
+    .article-list {
+        list-style: none;
+        maring: 0;
+        padding: 0;
+
+        li {
+            background-color: #eee;
+            padding: 15px 20px;
+            margin-bottom: 5px;
+
+            a {
+                &, &:hover, &:focus, &:active {
+                    color: #333;
+                    text-decoration: none;
+                }
+            }
+
+            .controls {
+                float: right;
+            }
+        }
+    }
+}
+
+.admin-form {
+    margin-bottom: 50px;
+
+    label {
+        color: #eee;
+    }
+
+    .form-control[readonly] {
+        cursor: pointer;
+    }
+
+    .editor {
+        width: 100%;
+        height: 500px;
+    }
+}

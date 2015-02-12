@@ -48,6 +48,15 @@ angular.module('skinnyBlog').factory 'ApiService', [
         articleDeferred.resolve(article: article)
         @cache.put "article:#{article.slug}", articleDeferred.promise
 
+    # Gets all of the articles for the admin dashboard
+    adminGetArticles: ->
+      @cacheOrPerform 'admin articles', ->
+        $http.get '/api/articles/all'
+
+    # Deletes an article
+    adminDeleteArticle: (id) ->
+      $http.delete "/api/articles/#{id}"
+
     # Helper method for grabbing something from the cache if it's there
     cacheOrPerform: (key, fn) ->
       value = @cache.get key

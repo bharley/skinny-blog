@@ -1,0 +1,23 @@
+
+<div class="dashboard">
+    <ul class="article-list">
+        <li ng-repeat="article in dashboard.articles">
+            <a ui-sref="admin/article({id: article.id})">
+                {{ article.title }}
+            </a>
+            <div class="label label-danger" ng-show="!article.published">
+                Unpublished
+            </div>
+            <div class="controls">
+                <a class="btn btn-xs btn-default" ui-sref="admin/article({id: article.id})">
+                    <i class="fa fa-pencil"></i>
+                    Edit
+                </a>
+                <button class="btn btn-xs btn-danger" ng-click="dashboard.deleteArticle($index)">
+                    <i class="fa fa-trash"></i>
+                    Delete
+                </button>
+            </div>
+        </li>
+    </ul>
+</div>

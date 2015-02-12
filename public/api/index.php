@@ -53,6 +53,21 @@ $app->get('/articles', function () use ($app, $em) {
     ], 200, null, $pages !== false ? ['pages' => $pages] : []);
 });
 
+// Get all articles -- admin fetch that includes unpublished
+$app->get('/articles/all', function () use ($app, $em) {
+    $articles = $em->createQueryBuilder()
+                   ->select('a', 't')
+                   ->from('Blog:Article', 'a')
+                   ->leftJoin('a.tags', 't')
+                   ->orderBy('a.publishedDate', 'DESC')
+                   ->getQuery()
+                   ->getResult();
+
+    $app->apiResponse([
+        'articles' => $articles,
+    ]);
+});
+
 // Save a new article
 $app->post('/articles', function() use ($app, $em) {
     $data = $app->request->getBody();

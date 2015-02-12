@@ -3,7 +3,7 @@ angular.module('skinnyBlog').controller 'ArticleController', [
   '$stateParams', 'ApiService', 'ActivityService',
   ($stateParams,   api,          activity) -> new class ArticleController
     constructor: ->
-      promise =  api.getArticle(
+      promise = api.getArticle(
         $stateParams.year,
         $stateParams.month,
         $stateParams.title
