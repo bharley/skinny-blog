@@ -80,7 +80,15 @@ app.directive 'bhMarkdown', ->
   scope:
     markdown: "&bhMarkdown"
   link: (scope, element, attrs) ->
-    require ['marked'], (marked) ->
+    require ['marked', 'highlight'], (marked, hljs) ->
+      # Set up syntax highlighting
+      marked.setOptions
+        langPrefix: 'hljs '
+        highlight: (code) ->
+          console.log hljs.highlightAuto(code).value
+          hljs.highlightAuto(code).value
+
+      # Set up our watcher
       watcher = -> element.html marked(scope.markdown()) if scope.markdown()
       watcher()
       scope.$watch scope.markdown, watcher
