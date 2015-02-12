@@ -44,6 +44,29 @@ class UnserializableTest extends PHPUnit_Framework_TestCase
         $person = new UnserializablePerson;
         $person->unserialize($data);
     }
+
+    public function testIgnoresProtectedProperty() {
+        $data = [
+            'age' => 999,
+        ];
+
+        $age = 24;
+        $person = new UnserializablePerson($age);
+        $person->unserialize($data, false);
+
+        $this->assertEquals($age, $person->getAge());
+    }
+
+    public function testUsesSetter() {
+        $data = [
+            'state' => 'minnesota',
+        ];
+
+        $person = new UnserializablePerson;
+        $person->unserialize($data);
+
+        $this->assertEquals(ucfirst($data['state']), $person->getState());
+    }
 }
 
 class UnserializablePerson
@@ -54,6 +77,7 @@ class UnserializablePerson
     protected $lastName;
     protected $age;
     protected $postalCode;
+    protected $state;
 
     /**
      * @param int $age
@@ -92,6 +116,22 @@ class UnserializablePerson
     public function getPostalCode()
     {
         return $this->postalCode;
+    }
+
+    /**
+     * @param mixed $state
+     */
+    public function setState($state)
+    {
+        $this->state = ucfirst($state);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getState()
+    {
+        return $this->state;
     }
 
     /**
