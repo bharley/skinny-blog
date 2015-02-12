@@ -166,7 +166,7 @@ $app->put('/articles/:id', function ($id) use ($app, $em) {
                 }, $data['tags']);
             }
 
-            $article->unserialize($data);
+            $article->unserialize($data, false);
             $em->flush();
 
             $app->apiResponse([

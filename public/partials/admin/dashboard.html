@@ -1,5 +1,11 @@
 
 <div class="dashboard">
+    <div class="text-right">
+        <a class="btn btn-default" ui-sref="admin/article/new">
+            <i class="fa fa-plus"></i>
+            New Article
+        </a>
+    </div>
     <ul class="article-list">
         <li ng-repeat="article in dashboard.articles">
             <a ui-sref="admin/article({id: article.id})">

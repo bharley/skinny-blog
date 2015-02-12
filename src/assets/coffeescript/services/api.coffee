@@ -41,6 +41,11 @@ angular.module('skinnyBlog').factory 'ApiService', [
       @cacheOrPerform "article:#{slug}", ->
         $http.get "/api/articles/#{slug}"
 
+    # Saves an article
+    saveArticle: (article) ->
+      $http.put "/api/articles/#{article.id}",
+        article: article
+
     cacheArticles: (articles) ->
       for article in articles
         # Create a promise so that this meets the same API contract as getting a single article

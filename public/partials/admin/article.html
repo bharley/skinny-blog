@@ -1,21 +1,40 @@
-<form class="admin-form">
+<form class="admin-form" ng-submit="admin.publish()">
     <div class="form-group">
         <label for="inputTitle">Title</label>
-        <input type="text" class="form-control" id="inputTitle" placeholder="Title" ng-model="article.title" ng-change="article.updateSlug()" required="required">
+        <input type="text" class="form-control" id="inputTitle" placeholder="Title" ng-model="admin.article.title" ng-change="admin.updateSlug()" required="required">
     </div>
     <div class="form-group">
         <label for="inputPublishedDate">Publish Date</label>
-        <input type="text" class="form-control" id="inputPublishedDate" bh-pickadate="article.publishedDate" bh-pickadate-change="article.updateSlug(true)">
+        <input type="text" class="form-control" id="inputPublishedDate" bh-pickadate="admin.article.publishedDate" bh-pickadate-change="admin.updateSlug(true)">
     </div>
     <div class="form-group">
         <label for="inputSlug">Slug</label>
-        <input type="text" class="form-control" id="inputSlug" ng-model="article.slug" required="required">
+        <input type="text" class="form-control" id="inputSlug" ng-model="admin.article.slug" required="required">
     </div>
     <div class="form-group">
         <label>Text</label>
-        <div class="editor" bh-editor bh-editor-update="article.getSetText" bh-editor-model="article.text"></div>
+        <div class="editor" bh-editor bh-editor-update="admin.articleText" bh-editor-model="admin.article.text"></div>
     </div>
-    <button type="submit" class="btn btn-default">Submit</button>
+    <span ng-show="admin.article.published">
+        <button type="submit" class="btn btn-primary" ng-class="{'disabled': admin.saving}">
+            <i class="fa fa-floppy-o"></i>
+            Save
+        </button>
+    </span>
+    <span ng-show="!admin.article.published">
+        <button type="submit" class="btn btn-primary" ng-class="{'disabled': admin.saving}">
+            <i class="fa fa-wifi"></i>
+            Save &amp; Publish
+        </button>
+        <button type="button" class="btn btn-success" ng-class="{'disabled': admin.saving}" ng-click="admin.save()">
+            <i class="fa fa-floppy-o"></i>
+            Save
+        </button>
+    </span>
+    <a type="button" class="btn btn-warning" ng-class="{'disabled': admin.saving}" ui-sref="admin">
+        <i class="fa fa-times"></i>
+        Cancel
+    </a>
 </form>
 
-<bh-article bh-model="article"></bh-article>
+<bh-article bh-model="admin.article"></bh-article>

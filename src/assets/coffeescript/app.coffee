@@ -33,7 +33,12 @@ app = angular.module('skinnyBlog', ['ui.router']).config [
       .state 'admin/article',
         url:         '^/admin/articles/{id:[0-9]+}'
         templateUrl: 'partials/admin/article.html'
-        controller:  'AdminArticleController as article'
+        controller:  'AdminArticleController as admin'
+
+      .state 'admin/article/new',
+        url:         '^/admin/articles/new'
+        templateUrl: 'partials/admin/article.html'
+        controller:  'AdminArticleController as admin'
 
     # Adds the 'success' and 'error' convenience methods that the $http promises have
     $provide.decorator '$q', [
@@ -85,7 +90,6 @@ app.directive 'bhMarkdown', ->
       marked.setOptions
         langPrefix: 'hljs '
         highlight: (code) ->
-          console.log hljs.highlightAuto(code).value
           hljs.highlightAuto(code).value
 
       # Set up our watcher
@@ -111,7 +115,6 @@ app.directive 'bhPickadate', ->
           # If a Date object is being set, it came from us
           if not (date instanceof Date)
             scope.date.setTime date
-            console.log scope.updateFn()
 
       picker = $element.pickadate 'picker'
 

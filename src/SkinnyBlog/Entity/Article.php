@@ -98,6 +98,13 @@ class Article implements JsonSerializable
     }
 
     /**
+     * @param array $parts
+     */
+    public function setSlugParts($parts) {
+        // Drops slug parts for serialization purposes
+    }
+
+    /**
      * @return array The parts of the slug
      */
     public function getSlugParts() {
