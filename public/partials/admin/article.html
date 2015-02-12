@@ -1,8 +1,7 @@
-
 <form class="admin-form">
     <div class="form-group">
         <label for="inputTitle">Title</label>
-        <input type="text" class="form-control" id="inputTitle" placeholder="Title" ng-model="article.title" ng-change="article.updateSlug()">
+        <input type="text" class="form-control" id="inputTitle" placeholder="Title" ng-model="article.title" ng-change="article.updateSlug()" required="required">
     </div>
     <div class="form-group">
         <label for="inputPublishedDate">Publish Date</label>
@@ -10,7 +9,7 @@
     </div>
     <div class="form-group">
         <label for="inputSlug">Slug</label>
-        <input type="text" class="form-control" id="inputSlug" ng-model="article.slug">
+        <input type="text" class="form-control" id="inputSlug" ng-model="article.slug" required="required">
     </div>
     <div class="form-group">
         <label>Text</label>
@@ -19,4 +18,4 @@
     <button type="submit" class="btn btn-default">Submit</button>
 </form>
 
-<div ng-include="'partials/article.html'"></div>
+<bh-article bh-model="article"></bh-article>

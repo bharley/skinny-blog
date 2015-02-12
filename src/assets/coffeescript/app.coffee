@@ -65,14 +65,26 @@ app.run [
     activity.decrementCounter()
 ]
 
+
+# Directive for showing an article
+app.directive 'bhArticle', ->
+  restrict:    'E'
+  templateUrl: 'partials/article.html'
+  scope:
+    article: '=bhModel'
+
+
 # Directive for markdown processing
 app.directive 'bhMarkdown', ->
   restrict: 'A'
   scope:
     markdown: "&bhMarkdown"
   link: (scope, element, attrs) ->
-    scope.$watch scope.markdown, ->
-      element.html marked(scope.markdown()) if scope.markdown()
+    require ['marked'], (marked) ->
+      watcher = -> element.html marked(scope.markdown()) if scope.markdown()
+      watcher()
+      scope.$watch scope.markdown, watcher
+
 
 
 # Directive for markdown processing
@@ -82,19 +94,22 @@ app.directive 'bhPickadate', ->
     date: '=bhPickadate'
     updateFn: '&bhPickadateChange'
   link: (scope, element, attrs) ->
-    $element = $(element)
-    $element.pickadate
-      format: 'd mmmm yyyy'
-      onSet: (context) ->
-        date = context.select
-        # If a Date object is being set, it came from us
-        if not (date instanceof Date)
-          scope.date.setTime date
-          console.log scope.updateFn()
+    require ['picker', 'picker.date'], ->
+      $element = $(element)
+      $element.pickadate
+        format: 'd mmmm yyyy'
+        onSet: (context) ->
+          date = context.select
+          # If a Date object is being set, it came from us
+          if not (date instanceof Date)
+            scope.date.setTime date
+            console.log scope.updateFn()
 
-    picker = $element.pickadate 'picker'
+      picker = $element.pickadate 'picker'
 
-    scope.$watch 'date', (date) -> picker.set('select', date) if date
+      watchFn = (date) -> picker.set('select', date) if date
+      watchFn scope.date
+      scope.$watch 'date', watchFn
 
 
 # Directive for show an editor
@@ -106,19 +121,23 @@ app.directive 'bhEditor', ->
     update:   '&bhEditorUpdate'
     model:    '=bhEditorModel'
   link: (scope, element, attrs) ->
-    theme = if scope.theme then scope.theme else 'monokai'
-    language = if scope.language then scope.language else 'markdown'
+    require ['ace'], ->
+      theme = if scope.theme then scope.theme else 'monokai'
+      language = if scope.language then scope.language else 'markdown'
 
-    editor = ace.edit element[0]
-    editor.setTheme 'ace/theme/' + theme
-    editor.getSession().setMode 'ace/mode/' + language
-    editor.getSession().setUseSoftTabs true
+      editor = ace.edit element[0]
+      editor.setTheme 'ace/theme/' + theme
+      editor.getSession().setMode 'ace/mode/' + language
+      editor.getSession().setUseSoftTabs true
 
-    # Listen for changes
-    scope.$watch 'model', ->
-      # Only update the first time to prevent stupid crap from happening
-      if not editor.getValue() && !! scope.model
-        editor.setValue(scope.model)
+      # Set the value on the first run-through
+      editor.setValue(scope.model) if scope.model
 
-    # Push changes back
-    editor.getSession().on 'change', -> scope.update() editor.getValue()
+      # Listen for changes
+      scope.$watch 'model', ->
+        # Only update the first time to prevent stupid crap from happening
+        if not editor.getValue() && scope.model
+          editor.setValue scope.model
+
+      # Push changes back
+      editor.getSession().on 'change', -> scope.update() editor.getValue()
