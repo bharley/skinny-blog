@@ -32,8 +32,20 @@
         </div>
     </nav>
 
+    <div class="container alerts-container" ng-controller="AlertController">
+        <div class="alert" role="alert" ng-repeat="alert in alerts" ng-class="'alert-' + alert.type">
+            <button type="button" class="close" aria-label="Close" ng-click="alerts.close($index)">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            {{ alert.message }}
+        </div>
+    </div>
+
+    <div class="container alerts-container">
+    </div>
+
     <div class="container">
-        <div ui-view></div>
+        <ui-view/>
     </div>
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.min.js"></script>

@@ -182,3 +182,20 @@ app.directive 'bhEditor', ->
 
       # Push changes back
       editor.getSession().on 'change', -> scope.update() editor.getValue()
+
+# Alerts
+app.directive 'bhAlerts', ->
+  restrict: 'A'
+  template: """
+<div class="alert" role="alert" ng-repeat="alert in alerts" ng-class="'alert-' + alert.type">
+    <button type="button" class="close" aria-label="Close" ng-click="close($index)">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    {{ alert.message }}
+</div>
+"""
+  scope: {}
+  link: (scope, element, attrs) ->
+    scope.alerts = [
+      {type: 'danger', message: 'test'}
+    ]
