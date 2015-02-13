@@ -1,6 +1,6 @@
 angular.module('skinnyBlog').controller 'AdminLoginController', [
-  '$state', 'AuthService', 'ActivityService',
-  ($state,   auth,          activity) -> new class AdminLoginController
+  '$state', 'AuthService', 'ActivityService', 'AlertService',
+  ($state,   auth,          activity,          alert) -> new class AdminLoginController
     constructor: ->
       @signingIn = false
 
@@ -18,6 +18,5 @@ angular.module('skinnyBlog').controller 'AdminLoginController', [
           $state.go 'admin'
       .error (message) =>
         @signingIn = false
-        # todo: Add an alert here
-        console.log message
+        alert.add "Error: #{message}"
 ]

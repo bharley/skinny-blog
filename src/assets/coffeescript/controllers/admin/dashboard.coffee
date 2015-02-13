@@ -1,6 +1,6 @@
 angular.module('skinnyBlog').controller 'AdminDashboardController', [
-  'ApiService', 'ActivityService', 'AuthService',
-  (api,          activity,          auth) -> new class AdminDashboardController
+  'ApiService', 'ActivityService', 'AuthService', 'AlertService',
+  (api,          activity,          auth,          alert) -> new class AdminDashboardController
     constructor: ->
       @articles = null
 
@@ -18,6 +18,5 @@ angular.module('skinnyBlog').controller 'AdminDashboardController', [
         promise.success =>
           @articles.splice index, 1
         .error (data) ->
-          # todo: Display this
-          console.log 'Error'
+          alert.add "Article id:#{article.id} could not be deleted."
 ]

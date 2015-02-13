@@ -1,7 +1,7 @@
 
 angular.module('skinnyBlog').controller 'AdminArticleController', [
-  '$scope', '$timeout', '$state', '$stateParams', 'ApiService', 'AuthService', 'ActivityService',
-  ($scope,   $timeout,   $state,   $stateParams,   api,          auth,          activity) -> new class AdminArticleController
+  '$scope', '$timeout', '$state', '$stateParams', 'ApiService', 'AuthService', 'ActivityService', 'AlertService',
+  ($scope,   $timeout,   $state,   $stateParams,   api,          auth,          activity,          alert) -> new class AdminArticleController
     constructor: ->
       @saving = false
       @isSlugDirty = false
@@ -18,7 +18,7 @@ angular.module('skinnyBlog').controller 'AdminArticleController', [
           @isSlugDirty = @article.published
           @pristineArticle = angular.copy @article
         .error (data) ->
-          # todo: Add error alert
+          alert.add "Alert id:#{$stateParams.id} not found."
           $state.go 'admin'
       else
         @article =
@@ -40,11 +40,11 @@ angular.module('skinnyBlog').controller 'AdminArticleController', [
       promise.success (data) =>
         @saving = false
         if redirect
-          # todo: Add success message
+          alert.add "Article \"#{@article.title}\" saved.", 'success'
           $state.go 'admin'
       .error (data) =>
         @saving = false
-        # todo: Add error
+        alert.add 'Article could not be saved.'
 
     # Automatically updates the slug if we need to
     updateSlug: (apply = false) ->
