@@ -129,7 +129,7 @@ app.directive 'bhMarkdown', ->
 
 
 
-# Directive for markdown processing
+# Directive for showing a date picker
 app.directive 'bhPickadate', ->
   restrict: 'A'
   scope:
@@ -153,7 +153,7 @@ app.directive 'bhPickadate', ->
       scope.$watch 'date', watchFn
 
 
-# Directive for show an editor
+# Directive for showing an editor
 app.directive 'bhEditor', ->
   restrict: 'A'
   scope:
