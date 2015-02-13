@@ -97,7 +97,6 @@ app.run [
         auth.desiredState =
           state:  toState.name
           params: toParams
-        console.log auth.desiredState
         $state.go 'admin/login'
 ]
 
