@@ -1,5 +1,5 @@
 
-app = angular.module('skinnyBlog', ['ui.router']).config [
+app = angular.module('skinnyBlog', ['ngCookies', 'ui.router']).config [
   '$stateProvider', '$urlRouterProvider', '$locationProvider', '$provide',
   ($stateProvider,   $urlRouterProvider,   $locationProvider,   $provide) ->
     # Turn on HTML5 url mode
