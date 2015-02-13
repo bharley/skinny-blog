@@ -5,10 +5,17 @@ namespace SkinnyBlog;
 use Doctrine\ORM\EntityManager;
 use SkinnyBlog\Entity\Article;
 use SkinnyBlog\Entity\Tag;
+use SkinnyBlog\OAuth\Validator;
 use Slim\Slim;
 
 class Application extends Slim
 {
+    /**
+     * @param array  $data
+     * @param int    $code
+     * @param string $message
+     * @param array  $additionalMeta
+     */
     public function apiResponse(array $data, $code = 200, $message = null, $additionalMeta = []) {
         // Attach metadata
         $data['meta'] = array_merge([
@@ -24,6 +31,22 @@ class Application extends Slim
         $response['Content-Type'] = 'application/json';
         $response->setStatus($code);
         $response->body(json_encode($data));
+    }
+
+    /**
+     * @param Validator $oauth
+     *
+     * @return bool Whether or not the requester has a valid auth token
+     */
+    public function hasAuthorization(Validator $oauth) {
+        $token = $this->request->headers->get('X-OAuth-Token');
+
+        if (!$oauth->isAuthorizedToken($token)) {
+            $this->apiResponse([], 401, 'Invalid OAuth token');
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**

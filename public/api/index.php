@@ -7,6 +7,8 @@ $container = require '../../src/bootstrap.php';
 $app = $container->get('app');
 /** @var Doctrine\ORM\EntityManager $em */
 $em = $container->get('entityManager');
+/** @var SkinnyBlog\OAuth\Validator $oauth */
+$oauth = $container->get('validator');
 
 // Get all articles
 $app->get('/articles', function () use ($app, $em) {
@@ -54,7 +56,9 @@ $app->get('/articles', function () use ($app, $em) {
 });
 
 // Get all articles -- admin fetch that includes unpublished
-$app->get('/articles/all', function () use ($app, $em) {
+$app->get('/articles/all', function () use ($app, $em, $oauth) {
+    if (!$app->hasAuthorization($oauth)) return;
+
     $articles = $em->createQueryBuilder()
                    ->select('a', 't')
                    ->from('Blog:Article', 'a')
@@ -69,7 +73,9 @@ $app->get('/articles/all', function () use ($app, $em) {
 });
 
 // Save a new article
-$app->post('/articles', function() use ($app, $em) {
+$app->post('/articles', function() use ($app, $em, $oauth) {
+    if (!$app->hasAuthorization($oauth)) return;
+
     $data = $app->request->getBody();
 
     if (is_array($data) && array_key_exists('article', $data)) {
@@ -122,7 +128,9 @@ $app->get('/articles/:year/:month/:title', function ($year, $month, $title) use 
 });
 
 // Publish an article
-$app->put('/articles/:id/publish', function ($id) use ($app, $em) {
+$app->put('/articles/:id/publish', function ($id) use ($app, $em, $oauth) {
+    if (!$app->hasAuthorization($oauth)) return;
+
     $article = $app->getArticle($em, $id);
 
     if ($article) {
@@ -136,7 +144,9 @@ $app->put('/articles/:id/publish', function ($id) use ($app, $em) {
 });
 
 // Unpublish an article
-$app->put('/articles/:id/unpublish', function ($id) use ($app, $em) {
+$app->put('/articles/:id/unpublish', function ($id) use ($app, $em, $oauth) {
+    if (!$app->hasAuthorization($oauth)) return;
+
     $article = $app->getArticle($em, $id);
 
     if ($article) {
@@ -150,7 +160,9 @@ $app->put('/articles/:id/unpublish', function ($id) use ($app, $em) {
 });
 
 // Update an article
-$app->put('/articles/:id', function ($id) use ($app, $em) {
+$app->put('/articles/:id', function ($id) use ($app, $em, $oauth) {
+    if (!$app->hasAuthorization($oauth)) return;
+
     $article = $app->getArticle($em, $id);
 
     if ($article) {
@@ -179,7 +191,9 @@ $app->put('/articles/:id', function ($id) use ($app, $em) {
 });
 
 // Delete an article
-$app->delete('/articles/:id', function ($id) use ($app, $em) {
+$app->delete('/articles/:id', function ($id) use ($app, $em, $oauth) {
+    if (!$app->hasAuthorization($oauth)) return;
+
     $article = $app->getArticle($em, $id);
 
     if ($article) {
@@ -198,7 +212,9 @@ $app->get('/tags', function () use ($app, $em) {
 });
 
 // Save a new tag
-$app->post('/tags', function() use ($app, $em) {
+$app->post('/tags', function() use ($app, $em, $oauth) {
+    if (!$app->hasAuthorization($oauth)) return;
+
     $data = $app->request->getBody();
 
     if (is_array($data) && array_key_exists('tag', $data)) {
@@ -217,7 +233,9 @@ $app->post('/tags', function() use ($app, $em) {
 });
 
 // Delete a tag
-$app->delete('/tags/:id', function ($id) use ($app, $em) {
+$app->delete('/tags/:id', function ($id) use ($app, $em, $oauth) {
+    if (!$app->hasAuthorization($oauth)) return;
+
     $tag = $app->getTag($em, $id);
 
     if ($tag) {
@@ -225,6 +243,20 @@ $app->delete('/tags/:id', function ($id) use ($app, $em) {
         $em->flush();
 
         $app->apiResponse([], 200, "Tag id:$id deleted");
+    }
+});
+
+// Returns information needed to perform an OAuth request against Google
+$app->get('/auth/info', function() use ($app, $oauth) {
+    $app->apiResponse([
+        'clientId' => $oauth->getClientId(),
+    ]);
+});
+
+// Check authentication headers for validity
+$app->get('/auth/check', function () use ($app, $oauth) {
+    if ($app->hasAuthorization($oauth)) {
+        $app->apiResponse([], 200, 'OAuth token is valid');
     }
 });
 

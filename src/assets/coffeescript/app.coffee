@@ -25,20 +25,35 @@ app = angular.module('skinnyBlog', ['ui.router']).config [
         templateUrl: 'partials/article.html'
         controller:  'ArticleController as article'
 
+      # Admin - dashboard
       .state 'admin',
         url:         '^/admin'
         templateUrl: 'partials/admin/dashboard.html'
         controller:  'AdminDashboardController as dashboard'
+        options:
+          secure: true
 
+      # Admin - Edit an article
       .state 'admin/article',
         url:         '^/admin/articles/{id:[0-9]+}'
         templateUrl: 'partials/admin/article.html'
         controller:  'AdminArticleController as admin'
+        options:
+          secure: true
 
+      # Admin - Create an article
       .state 'admin/article/new',
         url:         '^/admin/articles/new'
         templateUrl: 'partials/admin/article.html'
         controller:  'AdminArticleController as admin'
+        options:
+          secure: true
+
+      # Admin - Create an article
+      .state 'admin/login',
+        url:         '^/admin/login'
+        templateUrl: 'partials/admin/login.html'
+        controller:  'AdminLoginController as login'
 
     # Adds the 'success' and 'error' convenience methods that the $http promises have
     $provide.decorator '$q', [
@@ -64,10 +79,26 @@ app = angular.module('skinnyBlog', ['ui.router']).config [
 ]
 
 app.run [
-  'ActivityService',
-  (activity) ->
+  '$rootScope', '$state', 'ActivityService', 'AuthService',
+  ($rootScope,   $state,   activity,          auth) ->
     # Since the app is running, count down that initial stack count
     activity.decrementCounter()
+
+    # Check for states with authentication
+    $rootScope.$on '$stateChangeStart', (event, toState, toParams, fromState, fromParams) ->
+      # If we have authentication and we're trying to log in, no stahp...
+      if auth.isAuthenticated && toState.name is 'admin/login'
+        event.preventDefault()
+        $state.go 'admin'
+
+      # If we don't have authentication, go to the log in page
+      else if not auth.isAuthenticated && toState.options && toState.options.secure
+        event.preventDefault()
+        auth.desiredState =
+          state:  toState.name
+          params: toParams
+        console.log auth.desiredState
+        $state.go 'admin/login'
 ]
 
 

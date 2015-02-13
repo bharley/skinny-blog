@@ -42,9 +42,10 @@ angular.module('skinnyBlog').factory 'ApiService', [
         $http.get "/api/articles/#{slug}"
 
     # Saves an article
-    saveArticle: (article) ->
+    saveArticle: (article, token) ->
       $http.put "/api/articles/#{article.id}",
-        article: article
+        article: article,
+        @authHeaders token
 
     cacheArticles: (articles) ->
       for article in articles
@@ -53,14 +54,27 @@ angular.module('skinnyBlog').factory 'ApiService', [
         articleDeferred.resolve(article: article)
         @cache.put "article:#{article.slug}", articleDeferred.promise
 
+    # Get the authentication information
+    getAuthInfo: ->
+      @cacheOrPerform 'oauth clientId', ->
+        $http.get '/api/auth/info'
+
+    # Verifies login
+    hasValidAuthentication: (token) ->
+      $http.get '/api/auth/check', @authHeaders token
+
     # Gets all of the articles for the admin dashboard
-    adminGetArticles: ->
-      @cacheOrPerform 'admin articles', ->
-        $http.get '/api/articles/all'
+    adminGetArticles: (token) ->
+      $http.get '/api/articles/all', @authHeaders token
 
     # Deletes an article
     adminDeleteArticle: (id) ->
-      $http.delete "/api/articles/#{id}"
+      $http.delete "/api/articles/#{id}", @authHeaders token
+
+    # Generates the headers for authentication
+    authHeaders: (token) ->
+      headers:
+        'X-OAuth-Token': token
 
     # Helper method for grabbing something from the cache if it's there
     cacheOrPerform: (key, fn) ->

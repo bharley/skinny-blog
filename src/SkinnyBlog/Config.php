@@ -95,6 +95,10 @@ class Config implements ArrayAccess
                 'password' => self::$REQUIRED,
                 'database' => self::$REQUIRED,
             ],
+            'oauth' => [
+                'clientId'       => self::$REQUIRED,
+                'allowedUserIds' => [],
+            ],
         ];
     }
 

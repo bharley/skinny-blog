@@ -78,4 +78,14 @@ $container->add('entityManager', function() use ($config) {
     return $entityManager;
 });
 
+// Set up the OAuth validator
+$container->add('validator', function() use ($config) {
+    $validator = new SkinnyBlog\OAuth\GoogleValidator(
+        $config->get('oauth/clientId'),
+        $config->get('oauth/allowedUserIds')
+    );
+
+    return $validator;
+});
+
 return $container;

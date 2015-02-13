@@ -6,3 +6,12 @@ db:
   username: root
   password: ~
   database: blog
+
+# Set up OAuth information
+# - Make sure you wrap the user IDs in quotes as they will
+#   likely be too long to be represented as a PHP integer.
+oauth:
+  clientId: "ThisIsNotAClientId"
+  allowedUserIds:
+    - "123456789"
+    - "987654321"
