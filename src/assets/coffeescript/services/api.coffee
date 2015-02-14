@@ -41,6 +41,12 @@ angular.module('skinnyBlog').factory 'ApiService', [
       @cacheOrPerform "article:#{slug}", ->
         $http.get "/api/articles/#{slug}"
 
+    # Create a new article
+    createArticle: (article, token) ->
+      $http.post "/api/articles",
+        article: article,
+        @authHeaders token
+
     # Saves an article
     saveArticle: (article, token) ->
       $http.put "/api/articles/#{article.id}",

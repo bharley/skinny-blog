@@ -34,11 +34,21 @@ angular.module('skinnyBlog').controller 'AdminArticleController', [
     # Saves an article to the database
     save: (redirect = false) ->
       @saving = true
+      newArticle = !@article.id
 
-      promise = api.saveArticle @article, auth.token
+      # If this is a new article, we need to use a different endpoint
+      promise = if newArticle
+        api.createArticle @article, auth.token
+      else
+        api.saveArticle @article, auth.token
+
       activity.addPromise promise
       promise.success (data) =>
         @saving = false
+
+        if newArticle
+          @article.id = data.article.id
+
         if redirect
           alert.add "Article \"#{@article.title}\" saved.", 'success'
           $state.go 'admin'
