@@ -44,7 +44,8 @@ body {
 
 .tag-notice,
 article,
-article pre > code.hljs {
+article pre > code.hljs,
+blockquote {
     padding: 30px 45px;
 
     @media (max-width: 768px) {
@@ -224,20 +225,60 @@ article {
         margin: 0;
     }
 
-    pre {
-        padding: 0;
-        border-radius: 0;
-        border: 0;
-        margin: 15px -45px;
+    .body {
+        pre, blockquote {
+            border-radius: 0;
+            border: 0;
+            margin: 15px -45px;
 
-        @media (max-width: 768px) {
-            margin-left: -25px;
-            margin-right: -25px;
+            @media (max-width: 768px) {
+                margin-left: -25px;
+                margin-right: -25px;
+            }
         }
 
-        > code.hljs {
-            padding-top: 15px;
-            padding-bottom: 15px;
+        pre {
+            padding: 0;
+
+            > code.hljs {
+                padding-top: 15px;
+                padding-bottom: 15px;
+            }
+        }
+
+        blockquote {
+            position: relative;
+            background-color: #e3e3e3;
+
+            &:before,
+            &:after {
+                position: absolute;
+                font-family: FontAwesome;
+                font-size: 1.8em;
+                color: #ccc;
+
+                @media (max-width: 768px) {
+                    display: none;
+                }
+            }
+
+            &:before {
+                content: "\f10d";
+                bottom: 5px;
+                left: 10px;
+            }
+
+            &:after {
+                content: "\f10e";
+                top: 5px;
+                right: 10px;
+            }
+        }
+
+        img {
+            position: relative;
+            max-width: 100%;
+            height: auto;
         }
     }
 }
