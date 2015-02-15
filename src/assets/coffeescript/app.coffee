@@ -8,6 +8,14 @@ app = angular.module('skinnyBlog', ['ngCookies', 'ui.router']).config [
     # Allow matching with slashes at the end of a URL
     $urlMatcherFactoryProvider.strictMode false
 
+    # 404 on missing pages
+    $urlRouterProvider.otherwise ($injector, $location) ->
+      $injector.invoke [
+        '$state',
+        ($state) ->
+          $state.go '404'
+      ]
+
     # Set up our states/routes
     $stateProvider
       # List of articles
@@ -69,6 +77,10 @@ app = angular.module('skinnyBlog', ['ngCookies', 'ui.router']).config [
         url:         '^/admin/login'
         templateUrl: 'partials/admin/login.html'
         controller:  'AdminLoginController as login'
+
+      # 404 state
+      .state '404',
+        templateUrl: 'partials/404.html'
 
     # Adds the 'success' and 'error' convenience methods that the $http promises have
     $provide.decorator '$q', [

@@ -14,6 +14,10 @@
     </div>
 </div>
 
+<p ng-show="!articles.all || articles.all.length === 0">
+    There are no articles tagged with this tag.
+</p>
+
 <div class="article-list">
     <bh-article ng-repeat="article in articles.all" bh-model="article"></bh-article>
 </div>

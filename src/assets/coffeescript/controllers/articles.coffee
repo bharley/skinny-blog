@@ -36,6 +36,10 @@ angular.module('skinnyBlog').controller 'ArticlesController', [
         if data.meta.pages && data.meta.pages > 1
           @pages = data.meta.pages
 
+          # If we're on a non-existent page, go to the 404 page
+          if @page > @pages || @page < 1
+            $state.go '404'
+
           state = if @tag then 'tag' else 'articles'
           params = if @tag then {tag: @rawTag} else {}
 
