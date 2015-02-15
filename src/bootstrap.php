@@ -42,7 +42,12 @@ $container->add('app', function() use ($config) {
 
     // Set up error handling
     $app->error(function(Exception $e) use ($app) {
-        $app->apiResponse(array(), $e->getCode() ?: 500, $e->getMessage() ?: 'A server error occurred.');
+        $code = $e->getCode();
+        if ($code < 200 || $code >= 600) {
+            $code = 500;
+        }
+
+        $app->apiResponse(array(), $code, $e->getMessage() ?: 'A server error occurred.');
     });
 
     // Set up the 404 handler
