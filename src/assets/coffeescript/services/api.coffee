@@ -6,24 +6,15 @@ angular.module('skinnyBlog').factory 'ApiService', [
     constructor: -> @cache = $cacheFactory 'apiServiceCache'
 
     # Fetches all of the articles and caches each individual one
-    getArticles: ->
-      @cacheOrPerform 'articles', =>
+    getArticles: (page = 1, tag = null) ->
+      @cacheOrPerform "articles #{page} #{tag}", =>
         deferred = $q.defer()
 
-        $http.get('/api/articles').success (data) =>
-          @cacheArticles data.articles
-          deferred.resolve data
-        .error (data) ->
-          deferred.reject data
+        path = '/api/articles?page=' + page
+        if tag isnt null
+          path += '&tag=' + tag
 
-        return deferred.promise
-
-    # Fetches all of the articles with the given tag
-    getArticlesWithTag: (tag) ->
-      @cacheOrPerform "articles tag:#{tag}", =>
-        deferred = $q.defer()
-
-        $http.get('/api/articles?tag=' + tag).success (data) =>
+        $http.get(path).success (data) =>
           @cacheArticles data.articles
           deferred.resolve data
         .error (data) ->
@@ -53,6 +44,7 @@ angular.module('skinnyBlog').factory 'ApiService', [
         article: article,
         @authHeaders token
 
+    # Caches an array of articles into a promise to mimick caching an API call
     cacheArticles: (articles) ->
       for article in articles
         # Create a promise so that this meets the same API contract as getting a single article

@@ -73,12 +73,16 @@ article {
     margin-bottom: 40px;
 
     & > .fa {
-        margin-right: 5px;
+        margin-right: 10px;
         color: #777;
     }
 
     .tags {
         display: inline-block;
+    }
+
+    .pull-right .fa {
+        cursor: pointer;
     }
 }
 

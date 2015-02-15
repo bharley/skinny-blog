@@ -1,16 +1,13 @@
-
-<div class="tag-notice" ng-show="articles.tag">
-    <i class="fa fa-search"></i>
-    <ul class="tags">
-        <li>
-            <a ui-sref="tag({tag: articles.rawTag})">
-                <i class="fa fa-tag"></i>
-                {{ articles.tag }}
-            </a>
-        </li>
-    </ul>
-</div>
-
 <div class="article-list">
     <bh-article ng-repeat="article in articles.all" bh-model="article"></bh-article>
 </div>
+
+<bh-pagination
+    ng-show="articles.pages"
+
+    previous-disabled="!articles.prevHref"
+    previous-href="articles.prevHref"
+
+    next-disabled="!articles.nextHref"
+    next-href="articles.nextHref"
+    />

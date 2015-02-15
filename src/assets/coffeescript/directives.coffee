@@ -142,3 +142,29 @@ app.directive 'bhAlerts', [
       # Close alerts
       $scope.close = (index) -> $scope.alerts.splice index, 1
 ]
+
+# Pagination
+app.directive 'bhPagination', ->
+  restrict: 'E'
+  replace: true
+  template: """
+<nav>
+    <ul class="pager">
+        <li class="previous">
+            <a ng-href="{{ previousHref }}" ng-show="!previousDisabled">
+                <span aria-hidden="true">&larr;</span> Older
+            </a>
+        </li>
+        <li class="next">
+            <a ng-href="{{ nextHref }}" ng-show="!nextDisabled">
+                Newer <span aria-hidden="true">&rarr;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+"""
+  scope:
+    previousDisabled: '='
+    previousHref: '='
+    nextDisabled: '='
+    nextHref: '='

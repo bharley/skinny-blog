@@ -1,9 +1,12 @@
 
 app = angular.module('skinnyBlog', ['ngCookies', 'ui.router']).config [
-  '$stateProvider', '$urlRouterProvider', '$locationProvider', '$provide',
-  ($stateProvider,   $urlRouterProvider,   $locationProvider,   $provide) ->
+  '$stateProvider', '$urlRouterProvider', '$urlMatcherFactoryProvider', '$locationProvider', '$provide',
+  ($stateProvider,   $urlRouterProvider,   $urlMatcherFactoryProvider,   $locationProvider,   $provide) ->
     # Turn on HTML5 url mode
     $locationProvider.html5Mode true
+
+    # Allow matching with slashes at the end of a URL
+    $urlMatcherFactoryProvider.strictMode false
 
     # Set up our states/routes
     $stateProvider
@@ -13,10 +16,22 @@ app = angular.module('skinnyBlog', ['ngCookies', 'ui.router']).config [
         templateUrl: 'partials/articles.html'
         controller:  'ArticlesController as articles'
 
+      # List of articles, paginated
+      .state 'articles/page',
+        url:         '^/page/{page:[1-9][0-9]*}'
+        templateUrl: 'partials/articles.html'
+        controller:  'ArticlesController as articles'
+
       # Lists articles with the given tag
       .state 'tag',
         url:         '^/tag/:tag'
-        templateUrl: 'partials/articles.html'
+        templateUrl: 'partials/tag.html'
+        controller:  'ArticlesController as articles'
+
+      # Lists articles with the given tag
+      .state 'tag/page',
+        url:         '^/tag/:tag/page/{page:[1-9][0-9]*}'
+        templateUrl: 'partials/tag.html'
         controller:  'ArticlesController as articles'
 
       # Single article view
