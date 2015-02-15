@@ -36,7 +36,7 @@ $app->get('/articles', function () use ($app, $em) {
 
         $query = $qb->getQuery()
                     ->setFirstResult(($page - 1) * $pageSize)
-                    ->setMaxResults($page * $pageSize);
+                    ->setMaxResults($pageSize);
         $paginator = new Doctrine\ORM\Tools\Pagination\Paginator($query, true);
 
         $pages = ceil(count($paginator) / $pageSize);
