@@ -54,34 +54,67 @@ app.directive 'bhPickadate', ->
 
 
 # Directive for showing an editor
-app.directive 'bhEditor', ->
-  restrict: 'A'
-  scope:
-    theme:    '@bhEditorTheme'
-    language: '@bhEditorLanguage'
-    update:   '&bhEditorUpdate'
-    model:    '=bhEditorModel'
-  link: (scope, element, attrs) ->
-    require ['ace'], ->
-      theme = if scope.theme then scope.theme else 'monokai'
-      language = if scope.language then scope.language else 'markdown'
+app.directive 'bhEditor', [
+  'AuthService', 'ActivityService', 'AlertService',
+  (auth,          activity,          alert) ->
+    restrict: 'A'
+    scope:
+      theme:    '@bhEditorTheme'
+      language: '@bhEditorLanguage'
+      update:   '&bhEditorUpdate'
+      model:    '=bhEditorModel'
+    link: (scope, element, attrs) ->
+      require ['ace', 'dropzone'], ->
+        # Optional settings
+        theme = if scope.theme then scope.theme else 'monokai'
+        language = if scope.language then scope.language else 'markdown'
 
-      editor = ace.edit element[0]
-      editor.setTheme 'ace/theme/' + theme
-      editor.getSession().setMode 'ace/mode/' + language
-      editor.getSession().setUseSoftTabs true
+        # Set up the editor
+        editor = ace.edit element[0]
+        editor.setTheme 'ace/theme/' + theme
+        editor.getSession().setMode 'ace/mode/' + language
+        editor.getSession().setUseSoftTabs true
 
-      # Set the value on the first run-through
-      editor.setValue(scope.model) if scope.model
+        # Set the value on the first run-through
+        editor.setValue(scope.model) if scope.model
 
-      # Listen for changes
-      scope.$watch 'model', ->
-        # Only update the first time to prevent stupid crap from happening
-        if not editor.getValue() && scope.model
-          editor.setValue scope.model
+        # Listen for changes
+        scope.$watch 'model', ->
+          # Only update the first time to prevent stupid crap from happening
+          if not editor.getValue() && scope.model
+            editor.setValue scope.model
 
-      # Push changes back
-      editor.getSession().on 'change', -> scope.update() editor.getValue()
+        # Push changes back
+        editor.getSession().on 'change', -> scope.update() editor.getValue()
+
+        # Sets up the drop zone
+        placeholder = '![Uploading...]()'
+        $(element).dropzone
+          url: '/api/images'
+          headers:
+            'X-OAuth-Token': auth.token
+          acceptedFiles: 'image/*'
+
+          # Triggered on a file drop
+          drop: ->
+            editor.insert placeholder
+            activity.incrementCounter()
+
+          # Replaces the placeholder with the actual file
+          success: (file, response) ->
+            editor.find placeholder
+            editor.replace "![#{file.name}](#{response.image})"
+
+          # Removes the placeholder and throws up an error
+          error: (file, error, xhr) ->
+            editor.find placeholder
+            editor.replace ''
+            alert.add 'There was an error uploading the image.'
+
+          # Removes the activity indicator
+          complete: ->
+            activity.decrementCounter()
+]
 
 # Alerts
 app.directive 'bhAlerts', [

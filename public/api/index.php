@@ -246,6 +246,52 @@ $app->delete('/tags/:id', function ($id) use ($app, $em, $oauth) {
     }
 });
 
+// Upload an image
+$app->post('/images', function() use ($app, $oauth) {
+    if (!$app->hasAuthorization($oauth)) return;
+
+    $file = $_FILES['file'];
+
+    // Check for file upload errors
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        $app->apiResponse([], 400, "File could not be uploaded (errorno: {$file['error']}");
+    }
+
+    // Set up the file path
+    $destination = [
+        'path'      => '/assets/img/' . date('Y/m') . '/',
+        'name'      => bin2hex(openssl_random_pseudo_bytes(24)),
+        'extension' => '.' . pathinfo($file['name'], PATHINFO_EXTENSION),
+    ];
+    $destination['directory'] = ROOT .'/public/'. $destination['path'];
+
+    // Make sure the upload location exists
+    if (!is_dir($destination['directory']) && !mkdir($destination['directory'], 0777, true)) {
+        $app->apiResponse([], 500, 'Could not create upload directory. Check upload directory permissions.');
+    }
+
+    // Construct the final path
+    $path = join('', [
+        $destination['path'],
+        $destination['name'],
+        $destination['extension'],
+    ]);
+    $destination = join('', [
+        $destination['directory'],
+        $destination['name'],
+        $destination['extension'],
+    ]);
+
+    // Try to upload the image
+    if (move_uploaded_file($file['tmp_name'], $destination)) {
+        $app->apiResponse([
+            'image' => $path,
+        ]);
+    } else {
+        $app->apiResponse([], 500, 'File could not be moved. Check upload directory permissions.');
+    }
+});
+
 // Returns information needed to perform an OAuth request against Google
 $app->get('/auth/info', function() use ($app, $oauth) {
     $app->apiResponse([
