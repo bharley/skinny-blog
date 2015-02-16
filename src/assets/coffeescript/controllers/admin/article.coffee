@@ -79,4 +79,14 @@ angular.module('skinnyBlog').controller 'AdminArticleController', [
         $timeout => @article.text = text
       else
         text
+
+    # Add a tag to the article
+    addTag: (tag) ->
+      # todo: this
+      console.log tag
+
+    # Remove a tag from the article
+    removeTag: (tag) ->
+      # todo: this
+      console.log tag
 ]

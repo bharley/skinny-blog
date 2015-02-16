@@ -44,6 +44,10 @@ angular.module('skinnyBlog').factory 'ApiService', [
         article: article,
         @authHeaders token
 
+    # Get tags
+    getTags: (token) ->
+      $http.get '/api/tags', @authHeaders token
+
     # Caches an array of articles into a promise to mimick caching an API call
     cacheArticles: (articles) ->
       for article in articles

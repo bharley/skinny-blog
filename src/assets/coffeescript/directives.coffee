@@ -116,6 +116,66 @@ app.directive 'bhEditor', [
             activity.decrementCounter()
 ]
 
+# Helper function for the tag matching
+filterTags = (query) -> (tag) -> tag.match(new RegExp(query, 'i'))
+
+# Directive for tag authoring
+app.directive 'bhTagInput', [
+  'ApiService', 'AuthService', 'ActivityService',
+  (api,          auth,          activity) ->
+    restrict: 'A'
+    scope:
+      addTag: '&'
+      removeTag: '&'
+    link: ($scope, element, attrs) ->
+      require ['jquery-ui'], ->
+        require ['tag-it'], ->
+          tags = null
+          tagMap = {}
+
+          getTagId = (tag) ->
+            if tagMap[tag] isnt undefined
+              tagMap[tag]
+            else
+              tag
+
+          # Set up the tag-it element
+          $(element).tagit
+            allowSpaces:        true
+            removeConfirmation: true
+            autocomplete:
+              delay: 0
+              minLength: 1
+              source: (request, response) ->
+                # Only fetch the tags the first time
+                if not tags
+                  # Set up the request
+                  promise = api.getTags auth.token
+                  activity.addPromise promise
+
+                  promise.success (data) ->
+                    # Set up the tag mapping
+                    for tag in data.tags
+                      tagMap[tag.name] = tag.id
+
+                    # Set up the tag array for tag-it
+                    tags = (tag.name for tag in data.tags)
+
+                    response tags.filter(filterTags request.term)
+                  .error ->
+                    response []
+                else
+                  response tags.filter(filterTags request.term)
+
+            # Tells the controller that we've added a tag
+            afterTagAdded: (event, ui) ->
+              $scope.addTag() getTagId(ui.tagLabel)
+
+            # Inform the controller that we've removed a tag
+            afterTagRemoved: (event, ui) ->
+              $scope.removeTag() getTagId(ui.tagLabel)
+]
+
 # Alerts
 app.directive 'bhAlerts', [
   '$timeout',

@@ -205,7 +205,9 @@ $app->delete('/articles/:id', function ($id) use ($app, $em, $oauth) {
 });
 
 // Get all tags
-$app->get('/tags', function () use ($app, $em) {
+$app->get('/tags', function () use ($app, $em, $oauth) {
+    if (!$app->hasAuthorization($oauth)) return;
+
     $app->apiResponse([
         'tags' => $em->getRepository('Blog:Tag')->findAll(),
     ]);
