@@ -3,6 +3,7 @@
 namespace SkinnyBlog;
 
 use Doctrine\ORM\EntityManager;
+use InvalidArgumentException;
 use SkinnyBlog\Entity\Article;
 use SkinnyBlog\Entity\Tag;
 use SkinnyBlog\OAuth\Validator;
@@ -83,5 +84,36 @@ class Application extends Slim
             $this->apiResponse([], 404, "Tag id:$id not found");
             return null;
         }
+    }
+
+    /**
+     * @param EntityManager $em   The entity manager
+     * @param array         $tags The tags to unserialize
+     *
+     * @return array The unserialized tags
+     */
+    public function unserializeTags(EntityManager $em, $tags) {
+        return array_map(function ($tag) use ($em) {
+            // If this is an ID, grab the reference entity
+            if (array_key_exists('id', $tag)) {
+                return $em->getReference('Blog:Tag', $tag['id']);
+            } elseif (array_key_exists('name', $tag)) {
+                // Look up the tag
+                $entity = $em->getRepository('Blog:Tag')->findOneByName($tag['name']);
+
+                // Otherwise create a new tag
+                if (!$entity) {
+                    $entity = new Entity\Tag([
+                        'name' => $tag['name'],
+                    ]);
+
+                    $em->persist($entity);
+                }
+
+                return $entity;
+            } else {
+                throw new InvalidArgumentException('A tag must have an ID or a name.');
+            }
+        }, $tags);
     }
 }

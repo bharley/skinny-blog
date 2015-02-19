@@ -49,6 +49,16 @@ class Tag implements JsonSerializable
         }
     }
 
+    /**
+     * @param string $name The tag name
+     */
+    public function setName($name) {
+        $this->name = strtolower($name);
+    }
+
+    /**
+     * @return string The URL for this tag
+     */
     public function getUrl() {
         return str_replace(' ', '-', $this->name);
     }

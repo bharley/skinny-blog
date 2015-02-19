@@ -83,9 +83,7 @@ $app->post('/articles', function() use ($app, $em, $oauth) {
 
         // Find tags and deal with them
         if (array_key_exists('tags', $data)) {
-            $data['tags'] = array_map(function ($id) use ($em) {
-                return $em->getReference('Blog:Tag', $id);
-            }, $data['tags']);
+            $data['tags'] = $app->unserializeTags($em, $data['tags']);
         }
 
         $article = new SkinnyBlog\Entity\Article($data);
@@ -173,9 +171,7 @@ $app->put('/articles/:id', function ($id) use ($app, $em, $oauth) {
 
             // Find tags and deal with them
             if (array_key_exists('tags', $data)) {
-                $data['tags'] = array_map(function ($id) use ($em) {
-                    return $em->getReference('Blog:Tag', $id);
-                }, $data['tags']);
+                $data['tags'] = $app->unserializeTags($em, $data['tags']);
             }
 
             $article->unserialize($data, false);

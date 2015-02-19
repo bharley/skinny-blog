@@ -3,6 +3,7 @@ angular.module('skinnyBlog').controller 'AdminArticleController', [
   '$scope', '$timeout', '$state', '$stateParams', 'ApiService', 'AuthService', 'ActivityService', 'AlertService',
   ($scope,   $timeout,   $state,   $stateParams,   api,          auth,          activity,          alert) -> new class AdminArticleController
     constructor: ->
+      window.feesh = @
       @saving = false
       @isSlugDirty = false
       @article = null
@@ -24,6 +25,7 @@ angular.module('skinnyBlog').controller 'AdminArticleController', [
         @article =
           published:     false
           publishedDate: new Date()
+          tags:          []
         @pristineArticle = angular.copy @article
 
     # Saves and publishes an article
@@ -79,14 +81,4 @@ angular.module('skinnyBlog').controller 'AdminArticleController', [
         $timeout => @article.text = text
       else
         text
-
-    # Add a tag to the article
-    addTag: (tag) ->
-      # todo: this
-      console.log tag
-
-    # Remove a tag from the article
-    removeTag: (tag) ->
-      # todo: this
-      console.log tag
 ]

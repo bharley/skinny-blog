@@ -28,7 +28,6 @@ app.directive 'bhMarkdown', ->
       scope.$watch scope.markdown, watcher
 
 
-
 # Directive for showing a date picker
 app.directive 'bhPickadate', ->
   restrict: 'A'
@@ -121,26 +120,60 @@ filterTags = (query) -> (tag) -> tag.match(new RegExp(query, 'i'))
 
 # Directive for tag authoring
 app.directive 'bhTagInput', [
-  'ApiService', 'AuthService', 'ActivityService',
-  (api,          auth,          activity) ->
+  '$q', '$timeout', 'ApiService', 'AuthService', 'ActivityService',
+  ($q,   $timeout,   api,          auth,          activity) ->
     restrict: 'A'
     scope:
       addTag: '&'
       removeTag: '&'
+      tags: '='
     link: ($scope, element, attrs) ->
       require ['jquery-ui'], ->
         require ['tag-it'], ->
+          $element = $(element)
           tags = null
           tagMap = {}
+          populatingTags = false
 
-          getTagId = (tag) ->
+          # Helper for grabbing a tag object from the master list
+          getTagFromLabel = (tag) ->
             if tagMap[tag] isnt undefined
-              tagMap[tag]
+              id:   tagMap[tag]
+              name: tag
             else
-              tag
+              name: tag
+
+          # Helper for refreshing the tag list
+          refreshTags = ->
+            populatingTags = true
+            $element.tagit 'removeAll'
+            $element.tagit('createTag', tag.name) for tag in $scope.tags
+            populatingTags = false
+
+          # Grab all of our tags
+          tagDeferred = $q.defer()
+          promise = api.getTags auth.token
+          activity.addPromise promise
+
+          promise.success (data) ->
+            # Set up the tag mapping
+            for tag in data.tags
+              tagMap[tag.name] = tag.id
+
+            # Set up the tag array for tag-it
+            tags = (tag.name for tag in data.tags)
+
+            # Update our lists
+            if $scope.tags
+              refreshTags()
+
+            # Notify the deferred that we're done
+            tagDeferred.resolve()
+          .error ->
+            tagDeferred.rejct()
 
           # Set up the tag-it element
-          $(element).tagit
+          $element.tagit
             allowSpaces:        true
             removeConfirmation: true
             autocomplete:
@@ -149,31 +182,38 @@ app.directive 'bhTagInput', [
               source: (request, response) ->
                 # Only fetch the tags the first time
                 if not tags
-                  # Set up the request
-                  promise = api.getTags auth.token
-                  activity.addPromise promise
-
-                  promise.success (data) ->
-                    # Set up the tag mapping
-                    for tag in data.tags
-                      tagMap[tag.name] = tag.id
-
-                    # Set up the tag array for tag-it
-                    tags = (tag.name for tag in data.tags)
-
+                  # Wait for the tags to finish if we need to
+                  tagDeferred.success (data) ->
                     response tags.filter(filterTags request.term)
                   .error ->
                     response []
                 else
                   response tags.filter(filterTags request.term)
 
+            # Ensure that our tag is all lower case and kosher
+            beforeTagAdded: (event, ui) ->
+              span = ui.tag.find('span.tagit-label')
+              text = span.text().toLowerCase().replace /[^0-9a-z ]+/ig, ''
+              span.text text
+
             # Tells the controller that we've added a tag
             afterTagAdded: (event, ui) ->
-              $scope.addTag() getTagId(ui.tagLabel)
+              if not populatingTags
+                $timeout ->
+                  $scope.tags.push getTagFromLabel(ui.tagLabel)
 
             # Inform the controller that we've removed a tag
             afterTagRemoved: (event, ui) ->
-              $scope.removeTag() getTagId(ui.tagLabel)
+              if not populatingTags
+                $timeout ->
+                  for tag, index in $scope.tags
+                    if tag.name is ui.tagLabel
+                      $scope.tags.splice index, 1
+
+          # Watch for model changes
+          $scope.$watch 'tags', (newVal, oldVal) ->
+            if newVal != oldVal
+              refreshTags()
 ]
 
 # Alerts
