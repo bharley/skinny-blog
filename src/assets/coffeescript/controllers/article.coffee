@@ -1,7 +1,7 @@
 
 angular.module('skinnyBlog').controller 'ArticleController', [
-  '$state', '$stateParams', 'ApiService', 'ActivityService',
-  ($state,   $stateParams,   api,          activity) -> new class ArticleController
+  '$state', '$stateParams', 'ApiService', 'ActivityService', 'Page',
+  ($state,   $stateParams,   api,          activity,          page) -> new class ArticleController
     constructor: ->
       promise = api.getArticle(
         $stateParams.year,
@@ -11,6 +11,7 @@ angular.module('skinnyBlog').controller 'ArticleController', [
       activity.addPromise promise
       promise.success (data) =>
         @putArticleInScope data.article
+        page.setTitle data.article.title
       .error ->
         $state.go '404'
 

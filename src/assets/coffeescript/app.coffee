@@ -55,6 +55,7 @@ app = angular.module('skinnyBlog', ['ngCookies', 'ui.router']).config [
         controller:  'AdminDashboardController as dashboard'
         options:
           secure: true
+          title:  'Admin'
 
       # Admin - Edit an article
       .state 'admin/article',
@@ -63,6 +64,7 @@ app = angular.module('skinnyBlog', ['ngCookies', 'ui.router']).config [
         controller:  'AdminArticleController as admin'
         options:
           secure: true
+          title:  'Admin'
 
       # Admin - Create an article
       .state 'admin/article/new',
@@ -71,16 +73,21 @@ app = angular.module('skinnyBlog', ['ngCookies', 'ui.router']).config [
         controller:  'AdminArticleController as admin'
         options:
           secure: true
+          title:  'Admin'
 
       # Admin - Create an article
       .state 'admin/login',
         url:         '^/admin/login'
         templateUrl: 'partials/admin/login.html'
         controller:  'AdminLoginController as login'
+        options:
+          title: 'Log In'
 
       # 404 state
       .state '404',
         templateUrl: 'partials/404.html'
+        options:
+          title: 'Page not found'
 
     # Adds the 'success' and 'error' convenience methods that the $http promises have
     $provide.decorator '$q', [
@@ -106,8 +113,8 @@ app = angular.module('skinnyBlog', ['ngCookies', 'ui.router']).config [
 ]
 
 app.run [
-  '$rootScope', '$state', 'ActivityService', 'AuthService',
-  ($rootScope,   $state,   activity,          auth) ->
+  '$rootScope', '$state', 'ActivityService', 'AuthService', 'Page',
+  ($rootScope,   $state,   activity,          auth,          page) ->
     # Since the app is running, count down that initial stack count
     activity.decrementCounter()
 
@@ -125,4 +132,13 @@ app.run [
           state:  toState.name
           params: toParams
         $state.go 'admin/login'
+
+    # Reset the page title between states
+    $rootScope.$on '$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) ->
+      title = if toState.options && toState.options.title
+        toState.options.title
+      else
+        null
+
+      page.setTitle title
 ]

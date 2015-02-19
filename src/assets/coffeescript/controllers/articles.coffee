@@ -1,7 +1,7 @@
 
 angular.module('skinnyBlog').controller 'ArticlesController', [
-  '$state', 'ApiService', 'ActivityService',
-  ($state,   api,          activity) -> new class ArticlesController
+  '$state', 'ApiService', 'ActivityService', 'Page',
+  ($state,   api,          activity,          page) -> new class ArticlesController
     constructor: ->
       @prevHref = null
       @nextHref = null
@@ -33,7 +33,8 @@ angular.module('skinnyBlog').controller 'ArticlesController', [
       promise.success (data) =>
         @all = data.articles
 
-        if data.meta.pages && data.meta.pages > 1
+        console.log data
+        if data.meta.pages
           @pages = data.meta.pages
 
           # If we're on a non-existent page, go to the 404 page
@@ -42,6 +43,17 @@ angular.module('skinnyBlog').controller 'ArticlesController', [
 
           state = if @tag then 'tag' else 'articles'
           params = if @tag then {tag: @rawTag} else {}
+
+          # Set the page title if this is a tag view
+          title = if @tag && @page > 1
+            "Tag: #{@tag}, page #{@page}"
+          else if @tag
+            "Tag: #{@tag}"
+          else if @page > 1
+            "Page #{@page}"
+          else
+            ''
+          page.setTitle title
 
           # Set up the previous href if it's valid
           if @page < @pages
