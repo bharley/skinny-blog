@@ -159,6 +159,15 @@ code, kbd, pre, samp {
     }
 }
 
+.footer {
+    margin-top: 40px;
+
+    .container {
+        padding: 40px 0;
+        color: #aaa;
+    }
+}
+
 article,
 .tag-notice {
     .tags {
