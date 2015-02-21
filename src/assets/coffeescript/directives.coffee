@@ -280,7 +280,7 @@ app.directive 'bhDisqus', [
       article: '='
       active: '='
     template: """
-<div class="dsq-container" ng-show="active">
+<div class="dsq-container" ng-if="active">
   <div id="disqus_thread"></div>
   <a href="http://disqus.com" class="dsq-brlink">
     comments powered by <span class="logo-disqus">Disqus</span>
@@ -291,19 +291,11 @@ app.directive 'bhDisqus', [
       loadedArticle = null
 
       setUp = (article) ->
-        console.log 'Gate A'
-        console.log article
-        console.log $scope.active
-        console.log $scope.article
-
         # Go away if we're not ready
         return if not article || not article.title || not $scope.active
 
-        console.log 'Gate B'
         # Also go away if this article is already loaded
         return if loadedArticle && article.id isnt loadedArticle
-
-        console.log 'Gate C'
 
         # Register the Disqus properties we need
         params =
@@ -319,11 +311,7 @@ app.directive 'bhDisqus', [
 
         # Set up Disqus if we haven't already
         if not $window.DISQUS
-          `
-              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-              dsq.src = '//' + scope.disqus_shortname + '.disqus.com/embed.js';
-              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-          `
+          require ['disqus']
         # Otherwise reset the instance we have
         else
           $window.DISQUS.reset
