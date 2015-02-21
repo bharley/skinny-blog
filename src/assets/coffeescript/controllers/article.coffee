@@ -3,6 +3,9 @@ angular.module('skinnyBlog').controller 'ArticleController', [
   '$state', '$stateParams', 'ApiService', 'ActivityService', 'Page',
   ($state,   $stateParams,   api,          activity,          page) -> new class ArticleController
     constructor: ->
+      @raw = null
+      @showComments = true
+
       promise = api.getArticle(
         $stateParams.year,
         $stateParams.month,
@@ -10,14 +13,15 @@ angular.module('skinnyBlog').controller 'ArticleController', [
       )
       activity.addPromise promise
       promise.success (data) =>
-        @putArticleInScope data.article
+        @raw = data.article
+        @putArticleInScope()
 
         page.setTitle data.article.title
         page.setHeaderImage(data.article.headerImage) if data.article.headerImage
       .error ->
         $state.go '404'
 
-    putArticleInScope: (article) ->
+    putArticleInScope: ->
       properties = ['title', 'text', 'publishedDate', 'slugParts', 'tags']
-      @[property] = article[property] for property in properties
+      @[property] = @raw[property] for property in properties
 ]

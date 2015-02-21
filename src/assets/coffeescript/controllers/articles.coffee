@@ -33,7 +33,6 @@ angular.module('skinnyBlog').controller 'ArticlesController', [
       promise.success (data) =>
         @all = data.articles
 
-        console.log data
         if data.meta.pages
           @pages = data.meta.pages
 
