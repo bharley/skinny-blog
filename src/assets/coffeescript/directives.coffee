@@ -268,3 +268,71 @@ app.directive 'bhPagination', ->
     previousHref: '='
     nextDisabled: '='
     nextHref: '='
+
+
+# Disqus
+app.directive 'bhDisqus', [
+  '$window', '$state',
+  ($window,   $state) ->
+    restrict: 'E'
+    replace:  true
+    scope:
+      article: '='
+      active: '='
+    template: """
+<div class="dsq-container" ng-show="active">
+  <div id="disqus_thread"></div>
+  <a href="http://disqus.com" class="dsq-brlink">
+    comments powered by <span class="logo-disqus">Disqus</span>
+  </a>
+</div>
+"""
+    link: ($scope) ->
+      loadedArticle = null
+
+      setUp = (article) ->
+        console.log 'Gate A'
+        console.log article
+        console.log $scope.active
+        console.log $scope.article
+
+        # Go away if we're not ready
+        return if not article || not article.title || not $scope.active
+
+        console.log 'Gate B'
+        # Also go away if this article is already loaded
+        return if loadedArticle && article.id isnt loadedArticle
+
+        console.log 'Gate C'
+
+        # Register the Disqus properties we need
+        params =
+          year:  article.slugParts.year
+          month: article.slugParts.month
+          title: article.slugParts.title
+
+        # Pass on the Disqus variables
+        $window.disqus_shortname  = 'dev-blakeharley'
+        $window.disqus_identifier = $state.href 'article', params
+        $window.disqus_title      = article.title
+        $window.disqus_url        = $state.href 'article', params, absolute: true
+
+        # Set up Disqus if we haven't already
+        if not $window.DISQUS
+          `
+              var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+              dsq.src = '//' + scope.disqus_shortname + '.disqus.com/embed.js';
+              (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          `
+        # Otherwise reset the instance we have
+        else
+          $window.DISQUS.reset
+            reload: true
+            config: ->
+              this.page.identifier = $window.disqus_identifier
+              this.page.url        = $window.disqus_url
+              this.page.title      = $window.disqus_title
+
+      setUp $scope.article
+      $scope.$watch 'article', setUp
+]
