@@ -1,6 +1,6 @@
 <div class="dashboard">
     <div class="text-right">
-        <a class="btn btn-default" ui-sref="admin/article/new">
+        <a class="pure-button" ui-sref="admin/article/new">
             <i class="fa fa-plus"></i>
             New Article
         </a>
@@ -10,15 +10,15 @@
             <a ui-sref="admin/article({id: article.id})">
                 {{ article.title }}
             </a>
-            <div class="label label-danger" ng-show="!article.published">
+            <div class="unpublished" ng-show="!article.published">
                 Unpublished
             </div>
             <div class="controls">
-                <a class="btn btn-xs btn-default" ui-sref="admin/article({id: article.id})">
+                <a class="pure-button" ui-sref="admin/article({id: article.id})">
                     <i class="fa fa-pencil"></i>
                     Edit
                 </a>
-                <button class="btn btn-xs btn-danger" ng-click="dashboard.deleteArticle($index)">
+                <button class="pure-button button-error" ng-click="dashboard.deleteArticle($index)">
                     <i class="fa fa-trash"></i>
                     Delete
                 </button>

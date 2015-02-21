@@ -11,7 +11,9 @@ angular.module('skinnyBlog').controller 'ArticleController', [
       activity.addPromise promise
       promise.success (data) =>
         @putArticleInScope data.article
+
         page.setTitle data.article.title
+        page.setHeaderImage(data.article.headerImage) if data.article.headerImage
       .error ->
         $state.go '404'
 

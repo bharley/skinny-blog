@@ -135,10 +135,9 @@ app.run [
 
     # Reset the page title between states
     $rootScope.$on '$stateChangeSuccess', (event, toState, toParams, fromState, fromParams) ->
-      title = if toState.options && toState.options.title
-        toState.options.title
-      else
-        null
+      # Reset the page state
+      page.reset()
 
-      page.setTitle title
+      # Set a page title if we have one
+      page.setTitle(toState.options.title) if toState.options && toState.options.title
 ]

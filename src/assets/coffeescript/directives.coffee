@@ -251,12 +251,12 @@ app.directive 'bhPagination', ->
 <nav>
     <ul class="pager">
         <li class="previous">
-            <a ng-href="{{ previousHref }}" ng-show="!previousDisabled">
+            <a ng-href="{{ previousHref }}" ng-show="!previousDisabled" class="pure-button">
                 <span aria-hidden="true">&larr;</span> Older
             </a>
         </li>
         <li class="next">
-            <a ng-href="{{ nextHref }}" ng-show="!nextDisabled">
+            <a ng-href="{{ nextHref }}" ng-show="!nextDisabled" class="pure-button">
                 Newer <span aria-hidden="true">&rarr;</span>
             </a>
         </li>

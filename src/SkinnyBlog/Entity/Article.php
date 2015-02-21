@@ -30,21 +30,27 @@ class Article implements JsonSerializable
 
     /**
      * @var string
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=false)
      */
     protected $slug;
 
     /**
      * @var string
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=false)
      */
     protected $title;
 
     /**
      * @var string
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=false)
      */
     protected $text;
+
+    /**
+     * @var string
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $headerImage;
 
     /**
      * @var bool
@@ -159,6 +165,7 @@ class Article implements JsonSerializable
             'slugParts'     => $this->getSlugParts(),
             'title'         => $this->title,
             'text'          => $this->text,
+            'headerImage'   => $this->headerImage,
             'published'     => $this->published,
             'publishedDate' => $this->publishedDate ? $this->publishedDate->format('c') : null,
             'tags'          => $this->getTags(),

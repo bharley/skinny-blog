@@ -6,7 +6,7 @@
                 {{ article.title }}
             </a>
         </h1>
-        <div class="published-date visible-xs">
+        <div class="published-date">
             <i class="fa fa-pencil"></i>
             {{ article.publishedDate | date:'MMMM d, yyyy' }}
         </div>
@@ -17,17 +17,6 @@
                 </a>
             </li>
         </ul>
-
-        <div class="date-ribbon hidden-xs">
-            <div class="ribbon-container">
-                <div class="base">
-                    <div class="date">{{ article.publishedDate | date:'d MMM' }}</div>
-                    <div class="year">{{ article.publishedDate | date:'yyyy' }}</div>
-                </div>
-                <div class="left_corner"></div>
-                <div class="right_corner"></div>
-            </div>
-        </div>
     </header>
 
     <div class="body" bh-markdown="article.text"></div>
