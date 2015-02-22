@@ -304,7 +304,7 @@ app.directive 'bhDisqus', [
           title: article.slugParts.title
 
         # Pass on the Disqus variables
-        $window.disqus_shortname  = 'dev-blakeharley'
+        $window.disqus_shortname  = 'blakeharley'
         $window.disqus_identifier = $state.href 'article', params
         $window.disqus_title      = article.title
         $window.disqus_url        = $state.href 'article', params, absolute: true
