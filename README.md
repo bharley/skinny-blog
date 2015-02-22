@@ -3,6 +3,30 @@
 This is a rather simple RESTful API-based blog that uses [AngularJS] to
 render articles served by a [Slim Framework] server.
 
+## Deployment Process
+
+After cloning the repository, copy the example config file:
+
+```
+$ cp config/config.yaml.dist config/config.yaml
+```
+
+Change any values in the configuration file that need changing. Ensure that
+you set the `env` to `production`.
+
+Run composer with options optimized for production:
+
+```
+$ composer install --no-dev --optimize-autoloader
+```
+
+Have Doctrine generate the database schema and entity proxies:
+
+```
+$ ./vendor/bin/doctrine orm:schema-tool:create
+$ ./vendor/bin/doctrine orm:generate-proxies
+```
+
 ## Setting Up for Development
 
 Start by running composer:
