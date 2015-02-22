@@ -20,22 +20,29 @@ app.directive 'sbHighlight', ->
 
 
 # Directive for markdown processing
-app.directive 'bhMarkdown', ->
-  restrict: 'A'
-  scope:
-    markdown: "&bhMarkdown"
-  link: (scope, element, attrs) ->
-    require ['marked', 'highlight'], (marked, hljs) ->
-      # Set up syntax highlighting
-      marked.setOptions
-        langPrefix: 'hljs '
-        highlight: (code) ->
-          hljs.highlightAuto(code).value
+app.directive 'bhMarkdown', [
+  '$timeout',
+  ($timeout) ->
+    restrict: 'A'
+    scope:
+      markdown: "&bhMarkdown"
+    link: (scope, element, attrs) ->
+      require ['marked', 'highlight'], (marked, hljs) ->
+        # Set up syntax highlighting
+        marked.setOptions
+          langPrefix: 'hljs '
+          highlight: (code) ->
+            hljs.highlightAuto(code).value
 
-      # Set up our watcher
-      watcher = -> element.html marked(scope.markdown()) if scope.markdown()
-      watcher()
-      scope.$watch scope.markdown, watcher
+        # Set up our watcher
+        watcher = -> element.html marked(scope.markdown()) if scope.markdown()
+        watcher()
+        timeout = null
+        scope.$watch scope.markdown, ->
+          $timeout.cancel(timeout) if timeout
+
+          timeout = $timeout watcher, 500
+]
 
 
 # Directive for showing a date picker
