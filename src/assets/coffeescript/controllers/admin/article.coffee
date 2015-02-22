@@ -1,12 +1,20 @@
 
 angular.module('skinnyBlog').controller 'AdminArticleController', [
-  '$scope', '$timeout', '$state', '$stateParams', 'ApiService', 'AuthService', 'ActivityService', 'AlertService',
-  ($scope,   $timeout,   $state,   $stateParams,   api,          auth,          activity,          alert) -> new class AdminArticleController
+  '$scope', '$timeout', '$state', '$stateParams', 'ApiService', 'AuthService', 'ActivityService', 'AlertService', 'AssetService',
+  ($scope,   $timeout,   $state,   $stateParams,   api,          auth,          activity,          alert,          assets) -> new class AdminArticleController
     constructor: ->
       @saving = false
       @isSlugDirty = false
       @article = null
       @pristineArticle = false
+
+      # Load the stylesheets we need
+      assets.requireMany [
+        'jquery-ui'
+        'pure-forms'
+        'pickadate'
+        'pickadate-date'
+      ]
 
       # Load the article
       if $stateParams.id
