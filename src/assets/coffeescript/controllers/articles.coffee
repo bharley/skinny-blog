@@ -59,13 +59,13 @@ angular.module('skinnyBlog').controller 'ArticlesController', [
 
           # Set up the previous href if it's valid
           if @page < @pages
-            @prevHref = $state.href state + '/page', $.extend({}, params, page: @page + 1)
+            @prevHref = $state.href state + '/page', angular.extend({}, params, page: @page + 1)
 
           # Set up the next href
           if @page is 2
             @nextHref = $state.href state, params
           else if @page > 2
-            @nextHref = $state.href state + '/page', $.extend({}, params, page: @page - 1)
+            @nextHref = $state.href state + '/page', angular.extend({}, params, page: @page - 1)
       .error (data) =>
         @all = false
 

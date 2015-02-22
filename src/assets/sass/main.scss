@@ -102,6 +102,15 @@ code, kbd, pre, samp {
     padding: 0 15px;
 }
 
+#activity-spinner {
+    opacity: 1;
+    transition: opacity 0.5s;
+
+    &.off {
+        opacity: 0;
+    }
+}
+
 .header {
     $headerHeight: 350px;
     $logoSize: 105px;

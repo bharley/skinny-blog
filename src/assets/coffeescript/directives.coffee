@@ -14,8 +14,9 @@ app.directive 'sbHighlight', ->
   restrict: 'A'
   link: ($scope, element, attrs) ->
     require ['highlight'], (hljs) ->
-      element.find('pre code').each (i, block) ->
-        hljs.highlightBlock block
+      blocks = element.find('pre').find('code')
+      if blocks
+        hljs.highlightBlock(block) for block in blocks
 
 
 # Directive for markdown processing
