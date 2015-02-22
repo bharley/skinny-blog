@@ -30,6 +30,17 @@ $container->add('config', function() {
 /** @var SkinnyBlog\Config $config */
 $config = $container->get('config');
 
+// Set up the caching service
+$container->add('cache', function() use ($config) {
+    if ($config->isDevelopment()) {
+        $cache = new Doctrine\Common\Cache\ArrayCache;
+    } else {
+        $cache = new Doctrine\Common\Cache\ApcCache;
+    }
+
+    return $cache;
+});
+
 // Set up the application resource
 $container->add('app', function() use ($config) {
     $app = new SkinnyBlog\Application([
@@ -72,6 +83,11 @@ $container->add('entityManager', function() use ($config) {
     );
     $doctrineConfig->setMetadataDriverImpl($driver);
     $doctrineConfig->addEntityNamespace('Blog', 'SkinnyBlog\Entity');
+
+    if (!$config->isDevelopment()) {
+        $doctrineConfig->setQueryCacheImpl(new Doctrine\Common\Cache\ApcCache);
+        $doctrineConfig->setResultCacheImpl(new Doctrine\Common\Cache\ApcCache);
+    }
 
     $entityManager = Doctrine\ORM\EntityManager::create([
         'driver'   => $config->get('db/driver'),

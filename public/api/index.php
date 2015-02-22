@@ -65,6 +65,7 @@ $app->get('/articles/all', function () use ($app, $em, $oauth) {
                    ->leftJoin('a.tags', 't')
                    ->orderBy('a.publishedDate', 'DESC')
                    ->getQuery()
+                   ->useResultCache(false)
                    ->getResult();
 
     $app->apiResponse([
