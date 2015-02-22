@@ -45,7 +45,7 @@ app.directive 'bhPickadate', ->
     date: '=bhPickadate'
     updateFn: '&bhPickadateChange'
   link: (scope, element, attrs) ->
-    require ['picker', 'picker.date'], ->
+    require ['jquery', 'picker', 'picker.date'], ->
       $element = $(element)
       $element.pickadate
         format: 'd mmmm yyyy'
@@ -73,7 +73,7 @@ app.directive 'bhEditor', [
       update:   '&bhEditorUpdate'
       model:    '=bhEditorModel'
     link: (scope, element, attrs) ->
-      require ['ace', 'dropzone'], ->
+      require ['jquery', 'ace', 'dropzone'], ->
         # Optional settings
         theme = if scope.theme then scope.theme else 'monokai'
         language = if scope.language then scope.language else 'markdown'
@@ -138,7 +138,7 @@ app.directive 'bhTagInput', [
       removeTag: '&'
       tags: '='
     link: ($scope, element, attrs) ->
-      require ['jquery-ui'], ->
+      require ['jquery', 'jquery-ui'], ->
         require ['tag-it'], ->
           $element = $(element)
           tags = null
