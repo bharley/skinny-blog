@@ -110,6 +110,7 @@ code, kbd, pre, samp {
     position: relative;
     height: $headerHeight;
     background-size: cover;
+    background-position: center;
     background-repeat: none;
 
     $bottomMargin: ($logoSize / 2) + ($logoBorder * 2);
