@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
 use JsonSerializable;
+use Parsedown;
 use SkinnyBlog\Traits\Unserializable;
 
 /**
@@ -69,6 +70,11 @@ class Article implements JsonSerializable
      * @ORM\ManyToMany(targetEntity="Tag", inversedBy="articles")
      */
     protected $tags;
+
+    /**
+     * @var Parsedown
+     */
+    protected $markdownParser;
 
     /**
      * @param array $data Data to unserialize this instance with (Optional)
@@ -153,18 +159,33 @@ class Article implements JsonSerializable
     }
 
     /**
+     * @param Parsedown $parser The parser to use when serializing
+     */
+    public function setParser(Parsedown $parser)
+    {
+        $this->markdownParser = $parser;
+    }
+
+    /**
      * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
      *
      * @return array Data which can be serialized by json_encode, which is a value of any type other than a resource.
      */
     public function jsonSerialize()
     {
+        // Parse the text if we need to
+        if ($this->markdownParser) {
+            $text = $this->markdownParser->text($this->text);
+        } else {
+            $text = $this->text;
+        }
+
         return [
             'id'            => $this->id,
             'slug'          => $this->slug,
             'slugParts'     => $this->getSlugParts(),
             'title'         => $this->title,
-            'text'          => $this->text,
+            'text'          => $text,
             'headerImage'   => $this->headerImage,
             'published'     => $this->published,
             'publishedDate' => $this->publishedDate ? $this->publishedDate->format('c') : null,

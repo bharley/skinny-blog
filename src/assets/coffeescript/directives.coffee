@@ -9,6 +9,15 @@ app.directive 'bhArticle', ->
     article: '=bhModel'
 
 
+# Handles syntax highlighting on articles
+app.directive 'sbHighlight', ->
+  restrict: 'A'
+  link: ($scope, element, attrs) ->
+    require ['highlight'], (hljs) ->
+      element.find('pre code').each (i, block) ->
+        hljs.highlightBlock block
+
+
 # Directive for markdown processing
 app.directive 'bhMarkdown', ->
   restrict: 'A'

@@ -1,7 +1,7 @@
 
 angular.module('skinnyBlog').controller 'ArticleController', [
-  '$state', '$stateParams', 'ApiService', 'ActivityService', 'Page',
-  ($state,   $stateParams,   api,          activity,          page) -> new class ArticleController
+  '$state', '$stateParams', '$sce', 'ApiService', 'ActivityService', 'Page',
+  ($state,   $stateParams,   $sce,   api,          activity,          page) -> new class ArticleController
     constructor: ->
       @raw = null
       @showComments = true
@@ -14,6 +14,7 @@ angular.module('skinnyBlog').controller 'ArticleController', [
       activity.addPromise promise
       promise.success (data) =>
         @raw = data.article
+        @raw.html = $sce.trustAsHtml @raw.text
         @putArticleInScope()
 
         page.setTitle data.article.title
@@ -22,6 +23,6 @@ angular.module('skinnyBlog').controller 'ArticleController', [
         $state.go '404'
 
     putArticleInScope: ->
-      properties = ['title', 'text', 'publishedDate', 'slugParts', 'tags']
+      properties = ['title', 'html', 'publishedDate', 'slugParts', 'tags']
       @[property] = @raw[property] for property in properties
 ]

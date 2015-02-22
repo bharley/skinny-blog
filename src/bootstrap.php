@@ -41,6 +41,11 @@ $container->add('cache', function() use ($config) {
     return $cache;
 });
 
+// Markdown parser
+$container->add('markdown', function() {
+    return new Parsedown;
+});
+
 // Set up the application resource
 $container->add('app', function() use ($config) {
     $app = new SkinnyBlog\Application([

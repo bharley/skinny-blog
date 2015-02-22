@@ -11,11 +11,14 @@ $em = $container->get('entityManager');
 $oauth = $container->get('validator');
 
 // Get all articles
-$app->get('/articles', function () use ($app, $em) {
+$app->get('/articles', function () use ($app, $container) {
     $pageSize = $app->request->get('paginate', 10);
     $page = $app->request->get('page');
     $pages = false;
     $tag = $app->request->get('tag');
+
+    /** @var Doctrine\ORM\EntityManager $em */
+    $em = $container->get('entityManager');
 
     $qb = $em->createQueryBuilder()
              ->select('a', 't')
@@ -48,6 +51,13 @@ $app->get('/articles', function () use ($app, $em) {
         }
     } else {
         $articles = $qb->getQuery()->getResult();
+    }
+
+    // Add the markdown parser
+    /** @var Parsedown $parser */
+    $parser = $container->get('markdown');
+    foreach ($articles as $article) {
+        $article->setParser($parser);
     }
 
     $app->apiResponse([
@@ -100,7 +110,7 @@ $app->post('/articles', function() use ($app, $em, $oauth) {
 });
 
 // Get a single article
-$app->get('/articles/:id', function ($id) use ($app, $em) {
+$app->get('/articles/:id', function ($id) use ($app, $em, $oauth) {
     $article = $app->getArticle($em, $id);
 
     if ($article) {
@@ -111,13 +121,20 @@ $app->get('/articles/:id', function ($id) use ($app, $em) {
 });
 
 // Get a single article by it's slug
-$app->get('/articles/:year/:month/:title', function ($year, $month, $title) use ($app, $em) {
+$app->get('/articles/:year/:month/:title', function ($year, $month, $title) use ($app, $container) {
+    /** @var Doctrine\ORM\EntityManager $em */
+    $em = $container->get('entityManager');
+
     $dql = 'SELECT a FROM Blog:Article a WHERE a.slug = :slug';
     $article = $em->createQuery($dql)
                   ->setParameter('slug', "$year/$month/$title")
                   ->getOneOrNullResult();
 
     if ($article) {
+        /** @var Parsedown $parser */
+        $parser = $container->get('markdown');
+        $article->setParser($parser);
+
         $app->apiResponse([
             'article' => $article,
         ]);

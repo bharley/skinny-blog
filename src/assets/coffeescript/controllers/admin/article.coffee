@@ -3,7 +3,6 @@ angular.module('skinnyBlog').controller 'AdminArticleController', [
   '$scope', '$timeout', '$state', '$stateParams', 'ApiService', 'AuthService', 'ActivityService', 'AlertService',
   ($scope,   $timeout,   $state,   $stateParams,   api,          auth,          activity,          alert) -> new class AdminArticleController
     constructor: ->
-      window.feesh = @
       @saving = false
       @isSlugDirty = false
       @article = null

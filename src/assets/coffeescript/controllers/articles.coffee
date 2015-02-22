@@ -1,7 +1,7 @@
 
 angular.module('skinnyBlog').controller 'ArticlesController', [
-  '$state', 'ApiService', 'ActivityService', 'Page',
-  ($state,   api,          activity,          page) -> new class ArticlesController
+  '$state', '$sce', 'ApiService', 'ActivityService', 'Page',
+  ($state,   $sce,   api,          activity,          page) -> new class ArticlesController
     constructor: ->
       @prevHref = null
       @nextHref = null
@@ -32,6 +32,9 @@ angular.module('skinnyBlog').controller 'ArticlesController', [
       activity.addPromise promise
       promise.success (data) =>
         @all = data.articles
+
+        for article in @all
+          article.html = $sce.trustAsHtml article.text
 
         if data.meta.pages
           @pages = data.meta.pages

@@ -19,7 +19,8 @@
         </ul>
     </header>
 
-    <div class="body" bh-markdown="article.text"></div>
+    <div class="body" ng-if="article.html" ng-bind-html="article.html" sb-highlight></div>
+    <div class="body" ng-if="!article.html" bh-markdown="article.text"></div>
 
     <bh-disqus article="article.raw" active="article.showComments" />
 </article>
