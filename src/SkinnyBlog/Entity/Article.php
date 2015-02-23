@@ -66,6 +66,12 @@ class Article implements JsonSerializable
     protected $publishedDate;
 
     /**
+     * @var bool
+     * @ORM\Column(type="boolean")
+     */
+    protected $archived;
+
+    /**
      * @var Collection
      * @ORM\ManyToMany(targetEntity="Tag", inversedBy="articles")
      */
@@ -82,6 +88,7 @@ class Article implements JsonSerializable
     public function __construct($data = null) {
         $this->published = false;
         $this->publishedDate = new DateTime;
+        $this->archived = false;
         $this->tags = new ArrayCollection;
 
         if ($data) {

@@ -25,6 +25,7 @@ $app->get('/articles', function () use ($app, $container) {
              ->from('Blog:Article', 'a')
              ->leftJoin('a.tags', 't')
              ->where('a.published = true')
+             ->andWhere('a.archived = false')
              ->orderBy('a.publishedDate', 'DESC');
 
     if ($tag) {
